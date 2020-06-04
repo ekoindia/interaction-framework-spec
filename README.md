@@ -23,9 +23,10 @@ _WIP_
   * Complex Validations
   * Data Type
   * Secure/Masked _(eg: password)_
-  * Format (Case, Emphasised, etc)
+  * UI-agnostic Formatting: (Text-Case, Emphasised, etc)
 * **Flow**: Define a user's journey for a product by chaining one or more transactions after a certain response.
-  * Parameter Chains: Pass data along a user-journey 
+  * Parameter Chains: Pass data along a user-journey
+  * Direction: Go forward or back to a previous step in a flow.
 * **Internationalization**
 * **Expressions**: Enables defining of basic logic by making arithmatical or logical calculations.
 * **Roles**: Map transactions (products) to roles to enable access control.
