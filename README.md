@@ -20,7 +20,7 @@ _WIP_
 * **Request**
 * **Responses**
 * **Parameters**
-* **Chain**: Define a user's journey for a product by chaining one or more next transactions after a response.
+* **Flow**: Define a user's journey for a product by chaining one or more transactions after a certain response.
 * **Internationalization**
 * **Expressions**: Enables defining of basic logic by making mathematical or logical calculations.
 * **Roles**: Map transactions (products) to roles to enable access control.
