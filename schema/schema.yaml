@@ -1,0 +1,4326 @@
+name: transaction_framework
+desc: ""
+tables:
+- name: _view_all_used_parameter_ids
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: parameter_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_all_used_parameter_ids AS (select distinct `transaction_framework`.`request_structure`.`parameter_id` AS `parameter_id` from `transaction_framework`.`request_structure` union select distinct `transaction_framework`.`response_structure`.`parameter_id` AS `parameter_id` from `transaction_framework`.`response_structure` union select distinct `transaction_framework`.`response_parameter_groups`.`member_parameter_id` AS `member_parameter_id` from `transaction_framework`.`response_parameter_groups` union select distinct `transaction_framework`.`interaction_chain_input_parameters`.`parameter_id` AS `parameter_id` from `transaction_framework`.`interaction_chain_input_parameters`)
+- name: _view_i18n__all_invalids
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: table_name
+    type: varchar(12)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: context
+    type: varchar(100)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: field
+    type: varchar(5)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: txt
+    type: varchar(100)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: txt_en
+    type: varchar(1000)
+    nullable: true
+    default: ""
+    comment: English
+  - name: txt_hi
+    type: varchar(1000)
+    nullable: true
+    default: ""
+    comment: Hindi
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_i18n__all_invalids AS (select 'interactions' AS `table_name`,`t`.`id` AS `id`,(`t`.`label` collate utf8_general_ci) AS `context`,'label' AS `field`,`l`.`id` AS `i18n`,(`t`.`label` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interactions` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`label`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`label` <> `l`.`en`))) union select 'interactions' AS `table_name`,`t`.`id` AS `id`,(`t`.`label` collate utf8_general_ci) AS `context`,'label_response' AS `field`,`l`.`id` AS `i18n`,(`t`.`label_response` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interactions` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_response_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`label_response`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`label_response` <> `l`.`en`))) union select 'interactions' AS `table_name`,`t`.`id` AS `id`,(`t`.`label` collate utf8_general_ci) AS `context`,'history_label' AS `field`,`l`.`id` AS `i18n`,(`t`.`history_label` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interactions` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`history_label_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`history_label`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`history_label` <> `l`.`en`))) union select 'interactions' AS `table_name`,`t`.`id` AS `id`,(`t`.`label` collate utf8_general_ci) AS `context`,'description' AS `field`,`l`.`id` AS `i18n`,(`t`.`description` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interactions` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`description_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`description`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`description` <> `l`.`en`))) union select 'parameters' AS `table_name`,`t`.`id` AS `id`,(concat_ws(', ',convert(`t`.`name` using utf8),`t`.`label`) collate utf8_general_ci) AS `context`,'value' AS `field`,`l`.`id` AS `i18n`,(`t`.`value` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`parameters` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`value_i18n` = `l`.`id`))) where ((`t`.`parameter_type_id` in (20,21)) and (((length(coalesce(`t`.`value`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`value` <> `l`.`en`)))) union select 'parameters' AS `table_name`,`t`.`id` AS `id`,(concat_ws(', ',convert(`t`.`name` using utf8),`t`.`label`) collate utf8_general_ci) AS `context`,'label' AS `field`,`l`.`id` AS `i18n`,(`t`.`label` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`parameters` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`label`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`label` <> `l`.`en`))) union select 'parameters' AS `table_name`,`t`.`id` AS `id`,(concat_ws(', ',convert(`t`.`name` using utf8),`t`.`label`) collate utf8_general_ci) AS `context`,'label_response' AS `field`,`l`.`id` AS `i18n`,(`t`.`label_response` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`parameters` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_response_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`label_response`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`label_response` <> `l`.`en`))) union select 'parameters' AS `table_name`,`t`.`id` AS `id`,(concat_ws(', ',convert(`t`.`name` using utf8),`t`.`label`) collate utf8_general_ci) AS `context`,'description' AS `field`,`l`.`id` AS `i18n`,(`t`.`description` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`parameters` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`description_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`description`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`description` <> `l`.`en`))) union select 'interaction_categories' AS `table_name`,`t`.`id` AS `id`,('' collate utf8_general_ci) AS `context`,'title' AS `field`,`l`.`id` AS `i18n`,(`t`.`title` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interaction_categories` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`title_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`title`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`title` <> `l`.`en`))) union select 'interaction_chains' AS `table_name`,`t`.`id` AS `id`,cast(`t`.`_context` as char charset utf8) AS `context`,'label' AS `field`,`l`.`id` AS `i18n`,(`t`.`label` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interaction_chains` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`label`,'')) > 0) and isnull(`l`.`id`) and (`t`.`is_automatic` = 0)) or ((`l`.`en` is not null) and (`t`.`label` <> `l`.`en`))) union select 'interaction_chains' AS `table_name`,`t`.`id` AS `id`,cast(`t`.`_context` as char charset utf8) AS `context`,'toast' AS `field`,`l`.`id` AS `i18n`,(`t`.`toast` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interaction_chains` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`toast_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`toast`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`toast` <> `l`.`en`))) union select 'list_elements' AS `table_name`,`t`.`id` AS `id`,('' collate utf8_general_ci) AS `context`,'description' AS `field`,`l`.`id` AS `i18n`,(`t`.`description` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`list_elements` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`description_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`description`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`description` <> `l`.`en`))) union select 'list_elements' AS `table_name`,`t`.`id` AS `id`,('' collate utf8_general_ci) AS `context`,'label' AS `field`,`l`.`id` AS `i18n`,(`t`.`label` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`list_elements` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_i18n` = `l`.`id`))) where (((length(coalesce(`t`.`label`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`label` <> `l`.`en`))) union select 'responses' AS `table_name`,`t`.`id` AS `id`,cast(`t`.`_context` as char charset utf8) AS `context`,'pre_msg_template' AS `field`,`l`.`id` AS `i18n`,(`t`.`pre_msg_template` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`responses` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`pre_msg_template_i18n` = `l`.`id`))) where ((`t`.`pre_msg_template` <> '{comment}') and (((length(coalesce(`t`.`pre_msg_template`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`pre_msg_template` <> `l`.`en`)))) union select 'responses' AS `table_name`,`t`.`id` AS `id`,cast(`t`.`_context` as char charset utf8) AS `context`,'post_msg_template' AS `field`,`l`.`id` AS `i18n`,(`t`.`post_msg_template` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`responses` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`post_msg_template_i18n` = `l`.`id`))) where ((`t`.`post_msg_template` <> '{comment}') and (((length(coalesce(`t`.`post_msg_template`,'')) > 0) and isnull(`l`.`id`)) or ((`l`.`en` is not null) and (`t`.`post_msg_template` <> `l`.`en`)))))
+- name: _view_i18n__all_invalids__match_found
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: table_name
+    type: varchar(22)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: field
+    type: varchar(17)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: found_txt
+    type: text
+    nullable: true
+    default: null
+    comment: ""
+  - name: found_i18n
+    type: bigint(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: txt
+    type: text
+    nullable: false
+    default: null
+    comment: ""
+  - name: txt_en
+    type: text
+    nullable: true
+    default: null
+    comment: ""
+  - name: txt_hi
+    type: text
+    nullable: true
+    default: null
+    comment: ""
+  - name: context
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: ""
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_i18n__all_invalids__match_found AS (select `i`.`table_name` AS `table_name`,`i`.`id` AS `id`,`i`.`field` AS `field`,`i`.`i18n` AS `i18n`,(select `s`.`en` from `transaction_framework`.`i18n_lang_strings` `s` where (`i`.`txt` = `s`.`en`)) AS `found_txt`,(select `s`.`id` from `transaction_framework`.`i18n_lang_strings` `s` where (`i`.`txt` = `s`.`en`)) AS `found_i18n`,`i`.`txt` AS `txt`,`i`.`txt_en` AS `txt_en`,`i`.`txt_hi` AS `txt_hi`,`i`.`context` AS `context` from `transaction_framework`.`_view_i18n__all_invalids` `i` having (`found_txt` is not null) order by `i`.`table_name`,`i`.`txt`)
+- name: _view_i18n__all_occurrences
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: table_name
+    type: varchar(12)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: context
+    type: varchar(100)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: field
+    type: varchar(5)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: txt
+    type: varchar(100)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: txt_en
+    type: varchar(1000)
+    nullable: true
+    default: ""
+    comment: English
+  - name: txt_hi
+    type: varchar(1000)
+    nullable: true
+    default: ""
+    comment: Hindi
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_i18n__all_occurrences AS (select 'interactions' AS `table_name`,`t`.`id` AS `id`,(`t`.`label` collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'label' AS `field`,(`t`.`label` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interactions` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'interactions' AS `table_name`,`t`.`id` AS `id`,(`t`.`label` collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'label_response' AS `field`,(`t`.`label_response` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interactions` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_response_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'interactions' AS `table_name`,`t`.`id` AS `id`,(`t`.`label` collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'history_label' AS `field`,(`t`.`history_label` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interactions` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`history_label_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'interactions' AS `table_name`,`t`.`id` AS `id`,(`t`.`label` collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'description' AS `field`,(`t`.`description` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interactions` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`description_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'parameters' AS `table_name`,`t`.`id` AS `id`,(concat_ws(', ',convert(`t`.`name` using utf8),`t`.`label`) collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'value' AS `field`,(`t`.`value` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`parameters` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`value_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'parameters' AS `table_name`,`t`.`id` AS `id`,(concat_ws(', ',convert(`t`.`name` using utf8),`t`.`label`) collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'label' AS `field`,(`t`.`label` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`parameters` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'parameters' AS `table_name`,`t`.`id` AS `id`,(concat_ws(', ',convert(`t`.`name` using utf8),`t`.`label`) collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'label_response' AS `field`,(`t`.`label_response` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`parameters` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_response_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'parameters' AS `table_name`,`t`.`id` AS `id`,(concat_ws(', ',convert(`t`.`name` using utf8),`t`.`label`) collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'description' AS `field`,(`t`.`description` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`parameters` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`description_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'interaction_categories' AS `table_name`,`t`.`id` AS `id`,('' collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'title' AS `field`,(`t`.`title` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interaction_categories` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`title_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'interaction_chains' AS `table_name`,`t`.`id` AS `id`,cast(`t`.`_context` as char charset utf8) AS `context`,`l`.`id` AS `i18n`,'label' AS `field`,(`t`.`label` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interaction_chains` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'interaction_chains' AS `table_name`,`t`.`id` AS `id`,cast(`t`.`_context` as char charset utf8) AS `context`,`l`.`id` AS `i18n`,'toast' AS `field`,(`t`.`toast` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`interaction_chains` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`toast_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'list_elements' AS `table_name`,`t`.`id` AS `id`,('' collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'description' AS `field`,(`t`.`description` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`list_elements` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`description_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'list_elements' AS `table_name`,`t`.`id` AS `id`,('' collate utf8_general_ci) AS `context`,`l`.`id` AS `i18n`,'label' AS `field`,(`t`.`label` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`list_elements` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`label_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'responses' AS `table_name`,`t`.`id` AS `id`,cast(`t`.`_context` as char charset utf8) AS `context`,`l`.`id` AS `i18n`,'pre_msg_template' AS `field`,(`t`.`pre_msg_template` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`responses` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`pre_msg_template_i18n` = `l`.`id`))) where (`l`.`id` is not null) union select 'responses' AS `table_name`,`t`.`id` AS `id`,cast(`t`.`_context` as char charset utf8) AS `context`,`l`.`id` AS `i18n`,'post_msg_template' AS `field`,(`t`.`post_msg_template` collate utf8_general_ci) AS `txt`,`l`.`en` AS `txt_en`,`l`.`hi` AS `txt_hi` from (`transaction_framework`.`responses` `t` left join `transaction_framework`.`i18n_lang_strings` `l` on((`t`.`post_msg_template_i18n` = `l`.`id`))) where (`l`.`id` is not null))
+- name: _view_i18n__to_translate
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: Set_ID
+    type: varchar(1)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: en
+    type: text
+    nullable: false
+    default: null
+    comment: ""
+  - name: hi
+    type: text
+    nullable: false
+    default: null
+    comment: ""
+  - name: gu
+    type: text
+    nullable: false
+    default: null
+    comment: ""
+  - name: mr
+    type: text
+    nullable: false
+    default: null
+    comment: ""
+  - name: kn
+    type: text
+    nullable: false
+    default: null
+    comment: ""
+  - name: ta
+    type: text
+    nullable: false
+    default: null
+    comment: ""
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_i18n__to_translate AS (select '1' AS `Set_ID`,`transaction_framework`.`i18n_lang_strings`.`id` AS `id`,(`transaction_framework`.`i18n_lang_strings`.`en` collate UTF8_UNICODE_CI) AS `en`,(`transaction_framework`.`i18n_lang_strings`.`hi` collate UTF8_UNICODE_CI) AS `hi`,(`transaction_framework`.`i18n_lang_strings`.`gu` collate UTF8_UNICODE_CI) AS `gu`,(`transaction_framework`.`i18n_lang_strings`.`mr` collate UTF8_UNICODE_CI) AS `mr`,(`transaction_framework`.`i18n_lang_strings`.`kn` collate UTF8_UNICODE_CI) AS `kn`,(`transaction_framework`.`i18n_lang_strings`.`ta` collate UTF8_UNICODE_CI) AS `ta` from `transaction_framework`.`i18n_lang_strings` where (((`transaction_framework`.`i18n_lang_strings`.`hi` = '') or (`transaction_framework`.`i18n_lang_strings`.`gu` = '') or (`transaction_framework`.`i18n_lang_strings`.`mr` = '') or (`transaction_framework`.`i18n_lang_strings`.`kn` = '') or (`transaction_framework`.`i18n_lang_strings`.`ta` = '')) and (not(`transaction_framework`.`i18n_lang_strings`.`id` in (select `_view_i18n__unused_strings`.`id` from `transaction_framework`.`_view_i18n__unused_strings`)))) union select '2' AS `Set_ID`,`transaction_framework`.`i18n_lang_strings_app`.`id` AS `id`,(`transaction_framework`.`i18n_lang_strings_app`.`en` collate UTF8_UNICODE_CI) AS `en`,(`transaction_framework`.`i18n_lang_strings_app`.`hi` collate UTF8_UNICODE_CI) AS `hi`,(`transaction_framework`.`i18n_lang_strings_app`.`gu` collate UTF8_UNICODE_CI) AS `gu`,(`transaction_framework`.`i18n_lang_strings_app`.`mr` collate UTF8_UNICODE_CI) AS `mr`,(`transaction_framework`.`i18n_lang_strings_app`.`kn` collate UTF8_UNICODE_CI) AS `kn`,(`transaction_framework`.`i18n_lang_strings_app`.`ta` collate UTF8_UNICODE_CI) AS `ta` from `transaction_framework`.`i18n_lang_strings_app` where (((`transaction_framework`.`i18n_lang_strings_app`.`hi` = '') or (`transaction_framework`.`i18n_lang_strings_app`.`gu` = '') or (`transaction_framework`.`i18n_lang_strings_app`.`mr` = '') or (`transaction_framework`.`i18n_lang_strings_app`.`kn` = '') or (`transaction_framework`.`i18n_lang_strings_app`.`ta` = '')) and (`transaction_framework`.`i18n_lang_strings_app`.`disabled` = 0)))
+- name: _view_i18n__unused_strings
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: en
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: English
+  - name: hi
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Hindi
+  - name: bn
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Bengali
+  - name: gu
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Gujarati
+  - name: mr
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Marathi
+  - name: kn
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Kannada
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_i18n__unused_strings AS (select `s1`.`id` AS `id`,`s1`.`en` AS `en`,`s1`.`hi` AS `hi`,`s1`.`bn` AS `bn`,`s1`.`gu` AS `gu`,`s1`.`mr` AS `mr`,`s1`.`kn` AS `kn` from `transaction_framework`.`i18n_lang_strings` `s1` where (not(exists(select `s2`.`id` from `transaction_framework`.`_view_i18n__all_occurrences` `s2` where (`s2`.`i18n` = `s1`.`id`)))))
+- name: _view_parameters__all_invalids
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: issue
+    type: varchar(24)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: type_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: param_type
+    type: varchar(45)
+    nullable: true
+    default: null
+    comment: ""
+  - name: name
+    type: varchar(50)
+    nullable: true
+    default: ""
+    comment: Parameter name to be sent as name/value pair to the server. If blank, the parameter is not sent to the server.
+  - name: label
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_response
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_parameters__all_invalids AS (select 'Label in Invisible Param' AS `issue`,`p`.`id` AS `id`,`p`.`parameter_type_id` AS `type_id`,`t`.`name` AS `param_type`,`p`.`name` AS `name`,`p`.`label` AS `label`,`p`.`label_response` AS `label_response` from (`transaction_framework`.`parameters` `p` left join `transaction_framework`.`parameter_types` `t` on((`t`.`id` = `p`.`parameter_type_id`))) where ((`p`.`parameter_type_id` in (1,6,7,23,27)) and ((`p`.`label` <> '') or (`p`.`label_response` <> ''))) union all select 'Label same as Label_Response' AS `issue`,`p`.`id` AS `id`,`p`.`parameter_type_id` AS `type_id`,`t`.`name` AS `param_type`,`p`.`name` AS `name`,`p`.`label` AS `label`,`p`.`label_response` AS `label_response` from (`transaction_framework`.`parameters` `p` left join `transaction_framework`.`parameter_types` `t` on((`t`.`id` = `p`.`parameter_type_id`))) where ((`p`.`label` <> '') and (`p`.`label` = `p`.`label_response`)))
+- name: _view_parameters_all_occurences
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: table_name
+    type: varchar(17)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: table_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: trxn_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: trxn_label
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_parameters_all_occurences AS (select `r`.`parameter_id` AS `id`,'request_structure' AS `table_name`,`r`.`id` AS `table_id`,`i`.`id` AS `trxn_id`,`i`.`label` AS `trxn_label` from (`transaction_framework`.`request_structure` `r` left join `transaction_framework`.`interactions` `i` on((`i`.`id` = `r`.`interaction_id`))) union select `r`.`parameter_id` AS `id`,'response_structure' AS `table_name`,`r`.`id` AS `table_id`,`i`.`id` AS `trxn_id`,`i`.`label` AS `trxn_label` from ((`transaction_framework`.`response_structure` `r` left join `transaction_framework`.`response_interaction_map` `m` on((`r`.`response_id` = `m`.`response_id`))) left join `transaction_framework`.`interactions` `i` on((`i`.`id` = `m`.`interaction_id`))) union select `g`.`member_parameter_id` AS `id`,'response_parameter_groups' AS `table_name`,`g`.`id` AS `table_id`,`i`.`id` AS `trxn_id`,`i`.`label` AS `trxn_label` from ((((`transaction_framework`.`response_parameter_groups` `g` left join `transaction_framework`.`parameters` `gp` on((`gp`.`id` = `g`.`group_parameter_id`))) left join `transaction_framework`.`response_structure` `r` on((`r`.`parameter_id` = `gp`.`id`))) left join `transaction_framework`.`response_interaction_map` `m` on((`r`.`id` = `m`.`response_id`))) left join `transaction_framework`.`interactions` `i` on((`i`.`id` = `m`.`interaction_id`))) union select `cp`.`parameter_id` AS `id`,'interaction_chain_input_parameters' AS `table_name`,`cp`.`id` AS `table_id`,`i`.`id` AS `trxn_id`,`i`.`label` AS `trxn_label` from (((`transaction_framework`.`interaction_chain_input_parameters` `cp` left join `transaction_framework`.`interaction_chains` `ic` on((`ic`.`id` = `cp`.`interaction_chain_id`))) left join `transaction_framework`.`response_interaction_map` `m` on((`ic`.`response_interaction_map_id` = `m`.`id`))) left join `transaction_framework`.`interactions` `i` on((`i`.`id` = `m`.`interaction_id`))))
+- name: _view_parameters_duplicate
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: parameter_type_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: type_metadata
+    type: varchar(500)
+    nullable: true
+    default: null
+    comment: |
+      Extra info about some parameter types.
+      DateTime format (eg: ddMMyyyy), Currency code (eg: INR) etc.
+      DateTime format specified as Java SimpleDateFormat specifiers (http://developer.android.com/reference/java/text/SimpleDateFormat.html).
+  - name: name
+    type: varchar(50)
+    nullable: true
+    default: ""
+    comment: Parameter name to be sent as name/value pair to the server. If blank, the parameter is not sent to the server.
+  - name: value
+    type: varchar(1000)
+    nullable: false
+    default: null
+    comment: ""
+  - name: value_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: label
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: label_response
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_response_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: pattern
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: ""
+  - name: pattern_keypress
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: ""
+  - name: pattern_error
+    type: varchar(200)
+    nullable: true
+    default: null
+    comment: Error message in case the user entry does not match the valid regex pattern
+  - name: pattern_format
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: ""
+  - name: min
+    type: varchar(15)
+    nullable: false
+    default: "0"
+    comment: |
+      Minimum value for validation of Numeric/Money/DateTime types.
+      For DateTime: specify range in D=Days (default), W=Weeks, M=Months, Y=Years, etc.
+      Eg: Min=-3 and Max=0 means from 3 days ago to Today (0)
+  - name: max
+    type: varchar(15)
+    nullable: false
+    default: "0"
+    comment: |
+      Maximum value for validation of Numeric/Money/DateTime types.
+      For DateTime: specify range in D=Days (default), W=Weeks, M=Months, Y=Years, etc.
+      Eg: Min=-3 and Max=0 means from 3 days ago to Today (0)
+  - name: length_min
+    type: int(4)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: length_max
+    type: int(4)
+    nullable: false
+    default: "250"
+    comment: ""
+  - name: lines_min
+    type: int(2)
+    nullable: false
+    default: "0"
+    comment: For multi-line text input field
+  - name: lines_max
+    type: int(2)
+    nullable: false
+    default: "0"
+    comment: For multi-line text input field
+  - name: mime_types
+    type: varchar(250)
+    nullable: false
+    default: null
+    comment: Accepted mime-types for RAW data (file upload)
+  - name: is_masked
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment:
+             Mask field with * (eg: for Password field)
+  - name: is_secure
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Handle data securely. Do not cache.
+  - name: allow_multiple_selection
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Allow multi-select in a LIST type parameter
+  - name: multiple_selection_separator
+    type: varchar(10)
+    nullable: false
+    default: null
+    comment: To separate multiple items when (for multi-select list)
+  - name: text_case_type_id
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: "0:default, 1:upper, 2:lower, 3:camel, 4:sentence"
+  - name: link
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: |
+      Any external URL to show with the parameter. Eg: Show link for Aadhaar/Voter-card Verification sites.
+      Value in <label>|<url> format. Eg: Verify|https://eaadhaar.uidai.gov.in
+  - name: description
+    type: varchar(250)
+    nullable: false
+    default: null
+    comment: ""
+  - name: description_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: _context
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: Any comment for internal development usage
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_parameters_duplicate AS (select `p`.`id` AS `id`,`p`.`parameter_type_id` AS `parameter_type_id`,`p`.`type_metadata` AS `type_metadata`,`p`.`name` AS `name`,`p`.`value` AS `value`,`p`.`value_i18n` AS `value_i18n`,`p`.`label` AS `label`,`p`.`label_i18n` AS `label_i18n`,`p`.`label_response` AS `label_response`,`p`.`label_response_i18n` AS `label_response_i18n`,`p`.`pattern` AS `pattern`,`p`.`pattern_keypress` AS `pattern_keypress`,`p`.`pattern_error` AS `pattern_error`,`p`.`pattern_format` AS `pattern_format`,`p`.`min` AS `min`,`p`.`max` AS `max`,`p`.`length_min` AS `length_min`,`p`.`length_max` AS `length_max`,`p`.`lines_min` AS `lines_min`,`p`.`lines_max` AS `lines_max`,`p`.`mime_types` AS `mime_types`,`p`.`is_masked` AS `is_masked`,`p`.`is_secure` AS `is_secure`,`p`.`allow_multiple_selection` AS `allow_multiple_selection`,`p`.`multiple_selection_separator` AS `multiple_selection_separator`,`p`.`text_case_type_id` AS `text_case_type_id`,`p`.`link` AS `link`,`p`.`description` AS `description`,`p`.`description_i18n` AS `description_i18n`,`p`.`_context` AS `_context` from `transaction_framework`.`parameters` `p` where exists(select 1 from `transaction_framework`.`parameters` `p2` where ((`p`.`id` <> `p2`.`id`) and (`p`.`name` = `p2`.`name`) and (`p`.`parameter_type_id` <> 3) and (`p`.`parameter_type_id` = `p2`.`parameter_type_id`) and (((`p`.`label` = '') and (`p2`.`label` = '') and (`p`.`label_response` = '') and (`p2`.`label_response` = '')) or ((`p`.`label` <> '') and (`p`.`label` = `p2`.`label`)) or ((`p`.`label_response` <> '') and (`p`.`label_response` = `p2`.`label_response`)) or ((`p`.`label` <> '') and (`p`.`label` = `p2`.`label_response`)) or ((`p2`.`label` <> '') and (`p`.`label_response` = `p2`.`label`))) and (`p`.`value` = `p2`.`value`) and ((isnull(`p`.`type_metadata`) and isnull(`p2`.`type_metadata`)) or (`p`.`type_metadata` = `p2`.`type_metadata`)) and ((`p`.`min` = `p2`.`min`) or (`p`.`min` = 0)) and ((`p`.`max` = `p2`.`max`) or (`p`.`min` = 0)) and ((`p`.`length_min` = `p2`.`length_min`) or (`p`.`length_min` = 0)) and ((`p`.`length_max` = `p2`.`length_max`) or (`p`.`length_max` = 0)))) order by `p`.`name`)
+- name: _view_parameters_unused
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: parameter_type_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: type_metadata
+    type: varchar(500)
+    nullable: true
+    default: null
+    comment: |
+      Extra info about some parameter types.
+      DateTime format (eg: ddMMyyyy), Currency code (eg: INR) etc.
+      DateTime format specified as Java SimpleDateFormat specifiers (http://developer.android.com/reference/java/text/SimpleDateFormat.html).
+  - name: name
+    type: varchar(50)
+    nullable: true
+    default: ""
+    comment: Parameter name to be sent as name/value pair to the server. If blank, the parameter is not sent to the server.
+  - name: value
+    type: varchar(1000)
+    nullable: false
+    default: null
+    comment: ""
+  - name: value_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: label
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: label_response
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_response_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: pattern
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: ""
+  - name: pattern_keypress
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: ""
+  - name: pattern_error
+    type: varchar(200)
+    nullable: true
+    default: null
+    comment: Error message in case the user entry does not match the valid regex pattern
+  - name: pattern_format
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: ""
+  - name: min
+    type: varchar(15)
+    nullable: false
+    default: "0"
+    comment: |
+      Minimum value for validation of Numeric/Money/DateTime types.
+      For DateTime: specify range in D=Days (default), W=Weeks, M=Months, Y=Years, etc.
+      Eg: Min=-3 and Max=0 means from 3 days ago to Today (0)
+  - name: max
+    type: varchar(15)
+    nullable: false
+    default: "0"
+    comment: |
+      Maximum value for validation of Numeric/Money/DateTime types.
+      For DateTime: specify range in D=Days (default), W=Weeks, M=Months, Y=Years, etc.
+      Eg: Min=-3 and Max=0 means from 3 days ago to Today (0)
+  - name: length_min
+    type: int(4)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: length_max
+    type: int(4)
+    nullable: false
+    default: "250"
+    comment: ""
+  - name: lines_min
+    type: int(2)
+    nullable: false
+    default: "0"
+    comment: For multi-line text input field
+  - name: lines_max
+    type: int(2)
+    nullable: false
+    default: "0"
+    comment: For multi-line text input field
+  - name: mime_types
+    type: varchar(250)
+    nullable: false
+    default: null
+    comment: Accepted mime-types for RAW data (file upload)
+  - name: is_masked
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment:
+             Mask field with * (eg: for Password field)
+  - name: is_secure
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Handle data securely. Do not cache.
+  - name: allow_multiple_selection
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Allow multi-select in a LIST type parameter
+  - name: multiple_selection_separator
+    type: varchar(10)
+    nullable: false
+    default: null
+    comment: To separate multiple items when (for multi-select list)
+  - name: text_case_type_id
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: "0:default, 1:upper, 2:lower, 3:camel, 4:sentence"
+  - name: link
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: |
+      Any external URL to show with the parameter. Eg: Show link for Aadhaar/Voter-card Verification sites.
+      Value in <label>|<url> format. Eg: Verify|https://eaadhaar.uidai.gov.in
+  - name: description
+    type: varchar(250)
+    nullable: false
+    default: null
+    comment: ""
+  - name: description_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: _context
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: Any comment for internal development usage
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_parameters_unused AS (select `p`.`id` AS `id`,`p`.`parameter_type_id` AS `parameter_type_id`,`p`.`type_metadata` AS `type_metadata`,`p`.`name` AS `name`,`p`.`value` AS `value`,`p`.`value_i18n` AS `value_i18n`,`p`.`label` AS `label`,`p`.`label_i18n` AS `label_i18n`,`p`.`label_response` AS `label_response`,`p`.`label_response_i18n` AS `label_response_i18n`,`p`.`pattern` AS `pattern`,`p`.`pattern_keypress` AS `pattern_keypress`,`p`.`pattern_error` AS `pattern_error`,`p`.`pattern_format` AS `pattern_format`,`p`.`min` AS `min`,`p`.`max` AS `max`,`p`.`length_min` AS `length_min`,`p`.`length_max` AS `length_max`,`p`.`lines_min` AS `lines_min`,`p`.`lines_max` AS `lines_max`,`p`.`mime_types` AS `mime_types`,`p`.`is_masked` AS `is_masked`,`p`.`is_secure` AS `is_secure`,`p`.`allow_multiple_selection` AS `allow_multiple_selection`,`p`.`multiple_selection_separator` AS `multiple_selection_separator`,`p`.`text_case_type_id` AS `text_case_type_id`,`p`.`link` AS `link`,`p`.`description` AS `description`,`p`.`description_i18n` AS `description_i18n`,`p`.`_context` AS `_context` from `transaction_framework`.`parameters` `p` where (not(`p`.`id` in (select distinct `_view_all_used_parameter_ids`.`parameter_id` from `transaction_framework`.`_view_all_used_parameter_ids`))) order by `p`.`id`)
+- name: _view_responses__unused
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: response_type_id
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: response_status_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: pre_msg_template
+    type: varchar(600)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: pre_msg_template_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: post_msg_template
+    type: varchar(500)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: post_msg_template_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: disable_redo
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Do not allow user to jump back to this response card by clicking on it (when it is in preview mode)
+  - name: logo
+    type: varchar(200)
+    nullable: false
+    default: ""
+    comment:
+             LOGO / Branding image absolute URI to show on top-right side of response cards. MAX-HEIGHT: 50px
+  - name: _context
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: more info about this response for internal usage
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_responses__unused AS (select `r`.`id` AS `id`,`r`.`response_type_id` AS `response_type_id`,`r`.`response_status_id` AS `response_status_id`,`r`.`pre_msg_template` AS `pre_msg_template`,`r`.`pre_msg_template_i18n` AS `pre_msg_template_i18n`,`r`.`post_msg_template` AS `post_msg_template`,`r`.`post_msg_template_i18n` AS `post_msg_template_i18n`,`r`.`disable_redo` AS `disable_redo`,`r`.`logo` AS `logo`,`r`.`_context` AS `_context` from `transaction_framework`.`responses` `r` where (not(`r`.`id` in (select `transaction_framework`.`response_interaction_map`.`response_id` from `transaction_framework`.`response_interaction_map`))))
+- name: _view_trxn_request
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: trxn_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: trxn_lbl
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  - name: prm_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: prm_type
+    type: varchar(45)
+    nullable: true
+    default: null
+    comment: ""
+  - name: prm_name
+    type: varchar(50)
+    nullable: true
+    default: ""
+    comment: Parameter name to be sent as name/value pair to the server. If blank, the parameter is not sent to the server.
+  - name: prm_lbl
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  - name: prm_val
+    type: varchar(1000)
+    nullable: true
+    default: null
+    comment: ""
+  - name: id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: interaction_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: parameter_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: order
+    type: int(3)
+    nullable: true
+    default: null
+    comment: Order number in which the request parameters should be displayed
+  - name: is_required
+    type: decimal(1,0)
+    nullable: false
+    default: "1"
+    comment: Is it mandatory to provide a value for this field?
+  - name: is_ignored_if_empty
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Do not send the parameter in HTTP request if the value is empty
+  - name: validate
+    type: varchar(255)
+    nullable: false
+    default: ""
+    comment: |
+      Custom validation expression. Use {} for current field's value. Use {param-name} to use another parameter's value.
+      Supports LISP like notation in JSON ARRAY format. First item in array is function name and next items are the operands.
+      Eg: (this-field>amount && this-field<=max_amount) will be written as: ['&&',  ['>',{},{amount}], ['<=',{},{max_amount}]]
+  - name: validate_err_msg
+    type: varchar(255)
+    nullable: false
+    default: ""
+    comment: Error message to show when the validation fails
+  - name: visible_on_param_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: id of PARAMETER on which the visibility of this PARAMETER depends
+  - name: visible_on_param_value
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: value of PARAMETER on which the visibility of this PARAMETER depends
+  - name: required_on_param_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: id of PARAMETER on which the optionality of this PARAMETER depends
+  - name: required_on_param_value
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: value of PARAMETER on which the optionality of this PARAMETER depends
+  - name: disabled_on_param_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: id of PARAMETER based on which this PARAMETER is enabled/disabled
+  - name: disabled_on_param_value
+    type: varchar(45)
+    nullable: false
+    default: ""
+    comment: value of PARAMETER based on which this PARAMETER is enabled/disabled
+  - name: api_interaction_type_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: interaction_type_id for making a API call to modify this field in real time
+  - name: api_on_param_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: id of PARAMETER on which the API call depends. API is called every time that parameter changes
+  - name: api_dependent_params
+    type: varchar(512)
+    nullable: false
+    default: ""
+    comment: |
+      Structure to define dependent parameters, map current parameter name with API parameter name and define constraints. Eg:
+      {
+        "utility_acc_no": {                                            // Call this API if utility_acc_no changes
+              "api_param_name":"mobile_number",        // Send value of utility_acc_no as mobile_number to the API (map utility_acc_no to mobile_number)
+              "length_max":4,                                         // Do not call API if length of utility_acc_no > 4
+              "length_min":4                                           // Do not call API if length of utility_acc_no < 4
+        },
+      
+        "service_type":{}                                             // Also call API if service_type changes. No mapping or constraints
+      }
+  - name: autofill
+    type: varchar(255)
+    nullable: false
+    default: ""
+    comment:
+             Comma separated list of values to show as autofill. Eg: "1000,2000,5000"
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_trxn_request AS (select `i`.`id` AS `trxn_id`,`i`.`label` AS `trxn_lbl`,`p`.`id` AS `prm_id`,`t`.`name` AS `prm_type`,`p`.`name` AS `prm_name`,`p`.`label` AS `prm_lbl`,`p`.`value` AS `prm_val`,`r`.`id` AS `id`,`r`.`interaction_id` AS `interaction_id`,`r`.`parameter_id` AS `parameter_id`,`r`.`order` AS `order`,`r`.`is_required` AS `is_required`,`r`.`is_ignored_if_empty` AS `is_ignored_if_empty`,`r`.`validate` AS `validate`,`r`.`validate_err_msg` AS `validate_err_msg`,`r`.`visible_on_param_id` AS `visible_on_param_id`,`r`.`visible_on_param_value` AS `visible_on_param_value`,`r`.`required_on_param_id` AS `required_on_param_id`,`r`.`required_on_param_value` AS `required_on_param_value`,`r`.`disabled_on_param_id` AS `disabled_on_param_id`,`r`.`disabled_on_param_value` AS `disabled_on_param_value`,`r`.`api_interaction_type_id` AS `api_interaction_type_id`,`r`.`api_on_param_id` AS `api_on_param_id`,`r`.`api_dependent_params` AS `api_dependent_params`,`r`.`autofill` AS `autofill` from (((`transaction_framework`.`request_structure` `r` left join `transaction_framework`.`parameters` `p` on((`r`.`parameter_id` = `p`.`id`))) left join `transaction_framework`.`parameter_types` `t` on((`p`.`parameter_type_id` = `t`.`id`))) left join `transaction_framework`.`interactions` `i` on((`r`.`interaction_id` = `i`.`id`))) order by `i`.`id`,`r`.`order`)
+- name: _view_trxn_response
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: trxn_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: trxn_label
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  - name: resp_id
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: resp_type_id
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: resp_status
+    type: varchar(20)
+    nullable: true
+    default: null
+    comment: ""
+  - name: pre_msg
+    type: varchar(600)
+    nullable: true
+    default: ""
+    comment: ""
+  - name: post_msg
+    type: varchar(500)
+    nullable: true
+    default: ""
+    comment: ""
+  - name: resp_cntxt
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: more info about this response for internal usage
+  - name: prm_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: prm_type
+    type: varchar(45)
+    nullable: true
+    default: null
+    comment: ""
+  - name: prm_name
+    type: varchar(50)
+    nullable: true
+    default: ""
+    comment: Parameter name to be sent as name/value pair to the server. If blank, the parameter is not sent to the server.
+  - name: prm_lbl
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  - name: prm_val
+    type: varchar(1000)
+    nullable: true
+    default: null
+    comment: ""
+  - name: list_prm_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: list_prm_lbl
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  - name: list_prm_val
+    type: varchar(1000)
+    nullable: true
+    default: null
+    comment: ""
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_trxn_response AS (select `i`.`id` AS `trxn_id`,`i`.`label` AS `trxn_label`,`r`.`id` AS `resp_id`,`r`.`response_type_id` AS `resp_type_id`,`st`.`name` AS `resp_status`,`r`.`pre_msg_template` AS `pre_msg`,`r`.`post_msg_template` AS `post_msg`,`r`.`_context` AS `resp_cntxt`,`p`.`id` AS `prm_id`,`pt`.`name` AS `prm_type`,`p`.`name` AS `prm_name`,if((isnull(`p`.`label_response`) or (`p`.`label_response` = '')),`p`.`label`,`p`.`label_response`) AS `prm_lbl`,`p`.`value` AS `prm_val`,`gp`.`id` AS `list_prm_id`,if((isnull(`gp`.`label_response`) or (`gp`.`label_response` = '')),`gp`.`label`,`gp`.`label_response`) AS `list_prm_lbl`,`gp`.`value` AS `list_prm_val` from ((((((((`transaction_framework`.`response_interaction_map` `rm` left join `transaction_framework`.`interactions` `i` on((`rm`.`interaction_id` = `i`.`id`))) left join `transaction_framework`.`responses` `r` on((`r`.`id` = `rm`.`response_id`))) left join `transaction_framework`.`response_status` `st` on((`r`.`response_status_id` = `st`.`id`))) left join `transaction_framework`.`response_structure` `rs` on((`r`.`id` = `rs`.`response_id`))) left join `transaction_framework`.`parameters` `p` on((`rs`.`parameter_id` = `p`.`id`))) left join `transaction_framework`.`parameter_types` `pt` on((`p`.`parameter_type_id` = `pt`.`id`))) left join `transaction_framework`.`response_parameter_groups` `rpg` on(((`p`.`parameter_type_id` = 5) and (`p`.`id` = `rpg`.`group_parameter_id`)))) left join `transaction_framework`.`parameters` `gp` on((`rpg`.`member_parameter_id` = `gp`.`id`))) order by `i`.`id`,`r`.`id`,`rs`.`order`,`gp`.`id`)
+- name: _view_trxn_response_chains
+  type: VIEW
+  comment: VIEW
+  columns:
+  - name: trxn_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: trxn_label
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  - name: resp_id
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: resp_type_id
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: resp_status
+    type: varchar(20)
+    nullable: true
+    default: null
+    comment: ""
+  - name: pre_msg
+    type: varchar(600)
+    nullable: true
+    default: ""
+    comment: ""
+  - name: resp_cntxt
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: more info about this response for internal usage
+  - name: chn_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: chn_lbl
+    type: varchar(255)
+    nullable: true
+    default: null
+    comment: ""
+  - name: chn_behvr_id
+    type: int(11)
+    nullable: true
+    default: "1"
+    comment: |
+      chain behavior if this will normal, external url, payment_gateway etc
+      1=Normal Chain (Normal Chain for bi-directional linking tf-response with new tf-request)
+      2=External URL (For opening external URL like shopping sites, sbi url for H2H etc)
+      3=Payment Gatement (For bi-directional linking of tf-request,tf-response and external payment gateway website)
+  - name: nxt_trxn_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: nxt_trxn_lbl
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  - name: chn_hidden
+    type: decimal(1,0)
+    nullable: true
+    default: "0"
+    comment: Do not show the chain. It is activted automatically (maybe through Customer-Profile-Stub, etc.)
+  - name: chn_auto
+    type: decimal(1,0)
+    nullable: true
+    default: "0"
+    comment: Don't ask/suggest; just goto the chained trxn (if True)
+  - name: chn_auto_nxt
+    type: decimal(1,0)
+    nullable: true
+    default: "0"
+    comment: Automatically fire/submit the next chained request (Unless the user is going back to EDIT that request-card)
+  - name: chn_go_back
+    type: decimal(1,0)
+    nullable: true
+    default: "0"
+    comment: Is the chain meant to go back to an EXISTING/VISIBLE REQUEST CARD (retry) in the interaction flow?
+  - name: chn_back_steps
+    type: int(2)
+    nullable: true
+    default: "0"
+    comment: Manual number of steps to go-back (replace prev trxn boxes). If is_going_back is 1, ignore next_interaction_id (specially, if not found) and find next interaction card by going back the specified number of steps
+  - name: chn_valid
+    type: varchar(255)
+    nullable: true
+    default: ""
+    comment: |
+      Use an expression to evaluate the visibility of chain based on other parameters (in response).
+      Expression example: ['&&', ['==', '{a}', '{b}'], ['<', '{a}', '{c}']]
+      (I.e, Enable this chain when parameters a == b and a < c)
+  - name: chn_ico
+    type: varchar(30)
+    nullable: true
+    default: go
+    comment:
+             icon for chain: go/repeat/refresh/back/add/remove/edit/etc.
+  - name: chn_toast
+    type: varchar(500)
+    nullable: true
+    default: null
+    comment: ""
+  - name: prm_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: prm_name
+    type: varchar(50)
+    nullable: true
+    default: ""
+    comment: Parameter name to be sent as name/value pair to the server. If blank, the parameter is not sent to the server.
+  - name: prm_lbl
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  - name: prm_val
+    type: varchar(1000)
+    nullable: true
+    default: null
+    comment: ""
+  indexes: []
+  constraints: []
+  triggers: []
+  def: CREATE VIEW _view_trxn_response_chains AS (select `i`.`id` AS `trxn_id`,`i`.`label` AS `trxn_label`,`r`.`id` AS `resp_id`,`r`.`response_type_id` AS `resp_type_id`,`st`.`name` AS `resp_status`,`r`.`pre_msg_template` AS `pre_msg`,`r`.`_context` AS `resp_cntxt`,`ic`.`id` AS `chn_id`,`ic`.`label` AS `chn_lbl`,`ic`.`chain_behavior_id` AS `chn_behvr_id`,`ni`.`id` AS `nxt_trxn_id`,`ni`.`label` AS `nxt_trxn_lbl`,`ic`.`is_hidden` AS `chn_hidden`,`ic`.`is_automatic` AS `chn_auto`,`ic`.`auto_fire_next_request` AS `chn_auto_nxt`,`ic`.`is_going_back` AS `chn_go_back`,`ic`.`go_back_steps` AS `chn_back_steps`,`ic`.`validate` AS `chn_valid`,`ic`.`icon` AS `chn_ico`,`ic`.`toast` AS `chn_toast`,`p`.`id` AS `prm_id`,`p`.`name` AS `prm_name`,if((isnull(`p`.`label_response`) or (`p`.`label_response` = '')),`p`.`label`,`p`.`label_response`) AS `prm_lbl`,`p`.`value` AS `prm_val` from (((((((`transaction_framework`.`response_interaction_map` `rm` left join `transaction_framework`.`interactions` `i` on((`rm`.`interaction_id` = `i`.`id`))) left join `transaction_framework`.`responses` `r` on((`r`.`id` = `rm`.`response_id`))) left join `transaction_framework`.`response_status` `st` on((`r`.`response_status_id` = `st`.`id`))) left join `transaction_framework`.`interaction_chains` `ic` on((`ic`.`response_interaction_map_id` = `rm`.`id`))) left join `transaction_framework`.`interactions` `ni` on((`ic`.`next_interaction_id` = `ni`.`id`))) left join `transaction_framework`.`interaction_chain_input_parameters` `icp` on((`ic`.`id` = `icp`.`interaction_chain_id`))) left join `transaction_framework`.`parameters` `p` on((`icp`.`parameter_id` = `p`.`id`))) where (`ic`.`id` is not null) order by `i`.`id`,`r`.`id`,`ic`.`id`)
+- name: brand_categories
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: title
+    type: varchar(128)
+    nullable: false
+    default: null
+    comment: ""
+  - name: title_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: disabled
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: _context
+    type: varchar(55)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: fk_brand_categories_title_i18n_idx
+    def: KEY fk_brand_categories_title_i18n_idx (title_i18n) USING BTREE
+    table: brand_categories
+    columns:
+    - title_i18n
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: brand_categories
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_brand_categories_title_i18n
+    type: FOREIGN KEY
+    def: FOREIGN KEY (title_i18n) REFERENCES i18n_lang_strings (id)
+    table: brand_categories
+    referenceTable: i18n_lang_strings
+    columns:
+    - title_i18n
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: brand_categories
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `brand_categories` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `title` varchar(128) NOT NULL,
+      `title_i18n` int(11) DEFAULT NULL,
+      `disabled` int(1) NOT NULL DEFAULT '0',
+      `_context` varchar(55) DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      KEY `fk_brand_categories_title_i18n_idx` (`title_i18n`),
+      CONSTRAINT `fk_brand_categories_title_i18n` FOREIGN KEY (`title_i18n`) REFERENCES `i18n_lang_strings` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1
+- name: brand_products
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: brand_interaction_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: product_label
+    type: varchar(120)
+    nullable: false
+    default: null
+    comment: ""
+  - name: product_label_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: product_interaction_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: fixed_params
+    type: varchar(120)
+    nullable: true
+    default: null
+    comment: ""
+  - name: icon
+    type: varchar(25)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: brand_products
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: brand_products
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `brand_products` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `brand_interaction_id` int(11) NOT NULL,
+      `product_label` varchar(120) NOT NULL,
+      `product_label_i18n` int(11) DEFAULT NULL,
+      `product_interaction_id` int(11) NOT NULL,
+      `fixed_params` varchar(120) DEFAULT NULL,
+      `icon` varchar(25) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1
+- name: chain_behaviors
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: name
+    type: varchar(50)
+    nullable: false
+    default: null
+    comment: For describing the chain behavior like normal, external_url or payment gateway
+  - name: description
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: chain_behaviors
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: chain_behaviors
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `chain_behaviors` (
+      `id` int(11) NOT NULL,
+      `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'For describing the chain behavior like normal, external_url or payment gateway',
+      `description` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+- name: confirm_submit_master
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: name
+    type: varchar(25)
+    nullable: false
+    default: null
+    comment: ""
+  - name: description
+    type: varchar(65)
+    nullable: false
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: confirm_submit_master
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: confirm_submit_master
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `confirm_submit_master` (
+      `id` int(11) NOT NULL,
+      `name` varchar(25) NOT NULL,
+      `description` varchar(65) NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1
+- name: connect_agreement
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: user_type
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: agreement_doc_url
+    type: varchar(200)
+    nullable: true
+    default: null
+    comment: Full URL for help document (usually a public Google doc)
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: connect_agreement
+    columns:
+    - id
+    comment: ""
+  - name: ind_role_id
+    def: UNIQUE KEY ind_role_id (user_type) USING BTREE
+    table: connect_agreement
+    columns:
+    - user_type
+    comment: ""
+  constraints:
+  - name: ind_role_id
+    type: UNIQUE
+    def: UNIQUE KEY ind_role_id (user_type)
+    table: connect_agreement
+    referenceTable: null
+    columns:
+    - user_type
+    referenceColumns: []
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: connect_agreement
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `connect_agreement` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `user_type` int(11) NOT NULL,
+      `agreement_doc_url` varchar(200) DEFAULT NULL COMMENT 'Full URL for help document (usually a public Google doc)',
+      PRIMARY KEY (`id`),
+      UNIQUE KEY `ind_role_id` (`user_type`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1
+- name: display_media
+  type: BASE TABLE
+  comment: Which media to show a response-parameter on? Eg: screen, paper, both, none, etc
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: description
+    type: varchar(45)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: display_media
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: display_media
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `display_media` (
+      `id` int(11) NOT NULL,
+      `description` varchar(45) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Which media to show a response-parameter on? Eg: screen, paper, both, none, etc'
+- name: doodles
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: url
+    type: varchar(128)
+    nullable: false
+    default: null
+    comment: |
+      Filename/URL of doodle. If it contains only filename, the doodle should be stored in the default location in Connect (images/doodle) otherwise a complete URL may be provided.
+      Doodle must be 256px x 54px with proper padding. If background is transparent, image must be left-aligned.
+  - name: msg
+    type: varchar(50)
+    nullable: false
+    default: ""
+    comment:
+             An optional short message. Eg: "Happy independence day!"
+  - name: start_date
+    type: date
+    nullable: false
+    default: null
+    comment: Date from which to start showing this doodle
+  - name: end_date
+    type: date
+    nullable: false
+    default: null
+    comment: Last date of showing this doodle
+  - name: repeat_yearly
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Ignore the year part of start/end_date and repeat yearly?
+  - name: disabled
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Is the entry disabled?
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: doodles
+    columns:
+    - id
+    comment: ""
+  - name: unique_from_date
+    def: UNIQUE KEY unique_from_date (start_date) USING BTREE
+    table: doodles
+    columns:
+    - start_date
+    comment: ""
+  - name: unique_to_date
+    def: UNIQUE KEY unique_to_date (end_date) USING BTREE
+    table: doodles
+    columns:
+    - end_date
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: doodles
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  - name: unique_from_date
+    type: UNIQUE
+    def: UNIQUE KEY unique_from_date (start_date)
+    table: doodles
+    referenceTable: null
+    columns:
+    - start_date
+    referenceColumns: []
+    comment: ""
+  - name: unique_to_date
+    type: UNIQUE
+    def: UNIQUE KEY unique_to_date (end_date)
+    table: doodles
+    referenceTable: null
+    columns:
+    - end_date
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: "CREATE TABLE `doodles` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `url` varchar(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'Filename/URL of doodle. If it contains only filename, the doodle should be stored in the default location in Connect (images/doodle) otherwise a complete URL may be provided.\\nDoodle must be 256px x 54px with proper padding. If background is transparent, image must be left-aligned.',\n  `msg` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'An optional short message. Eg: \"Happy independence day!\"',\n  `start_date` date NOT NULL COMMENT 'Date from which to start showing this doodle',\n  `end_date` date NOT NULL COMMENT 'Last date of showing this doodle',\n  `repeat_yearly` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Ignore the year part of start/end_date and repeat yearly?',\n  `disabled` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Is the entry disabled?',\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `unique_from_date` (`start_date`),\n  UNIQUE KEY `unique_to_date` (`end_date`)\n) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"
+- name: highlight_master
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(1)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label
+    type: varchar(20)
+    nullable: false
+    default: null
+    comment: ""
+  - name: description
+    type: varchar(45)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: highlight_master
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: highlight_master
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `highlight_master` (
+      `id` int(1) NOT NULL,
+      `label` varchar(20) NOT NULL,
+      `description` varchar(45) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1
+- name: i18n_lang_strings
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: en
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: English
+  - name: hi
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Hindi
+  - name: bn
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Bengali
+  - name: gu
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Gujarati
+  - name: mr
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Marathi
+  - name: kn
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Kannada
+  - name: ta
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Tamil
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: i18n_lang_strings
+    columns:
+    - id
+    comment: ""
+  - name: UniqueText
+    def: UNIQUE KEY UniqueText (en) USING BTREE
+    table: i18n_lang_strings
+    columns:
+    - en
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: i18n_lang_strings
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  - name: UniqueText
+    type: UNIQUE
+    def: UNIQUE KEY UniqueText (en)
+    table: i18n_lang_strings
+    referenceTable: null
+    columns:
+    - en
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `i18n_lang_strings` (
+      `id` int(11) NOT NULL,
+      `en` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'English',
+      `hi` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Hindi',
+      `bn` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Bengali',
+      `gu` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Gujarati',
+      `mr` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Marathi',
+      `kn` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Kannada',
+      `ta` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Tamil',
+      PRIMARY KEY (`id`),
+      UNIQUE KEY `UniqueText` (`en`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+- name: i18n_lang_strings_app
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: keystr
+    type: varchar(1000)
+    nullable: false
+    default: null
+    comment: Key String in English
+  - name: en
+    type: varchar(1000)
+    nullable: false
+    default: null
+    comment: English
+  - name: hi
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Hindi
+  - name: bn
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Bengali
+  - name: gu
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Gujarati
+  - name: mr
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Marathi
+  - name: kn
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Kannada
+  - name: ta
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: Tamil
+  - name: disabled
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Is entry disabled (not being used in the connect app)?
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: i18n_lang_strings_app
+    columns:
+    - id
+    comment: ""
+  - name: UniqueKey
+    def: UNIQUE KEY UniqueKey (keystr) USING BTREE
+    table: i18n_lang_strings_app
+    columns:
+    - keystr
+    comment: ""
+  - name: UniqueText
+    def: UNIQUE KEY UniqueText (en) USING BTREE
+    table: i18n_lang_strings_app
+    columns:
+    - en
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: i18n_lang_strings_app
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  - name: UniqueKey
+    type: UNIQUE
+    def: UNIQUE KEY UniqueKey (keystr)
+    table: i18n_lang_strings_app
+    referenceTable: null
+    columns:
+    - keystr
+    referenceColumns: []
+    comment: ""
+  - name: UniqueText
+    type: UNIQUE
+    def: UNIQUE KEY UniqueText (en)
+    table: i18n_lang_strings_app
+    referenceTable: null
+    columns:
+    - en
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `i18n_lang_strings_app` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `keystr` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'Key String in English',
+      `en` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'English',
+      `hi` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Hindi',
+      `bn` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Bengali',
+      `gu` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Gujarati',
+      `mr` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Marathi',
+      `kn` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Kannada',
+      `ta` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Tamil',
+      `disabled` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Is entry disabled (not being used in the connect app)?',
+      PRIMARY KEY (`id`),
+      UNIQUE KEY `UniqueKey` (`keystr`),
+      UNIQUE KEY `UniqueText` (`en`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+- name: interaction_behaviors
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: name
+    type: varchar(50)
+    nullable: false
+    default: null
+    comment: For describing the interaction behavior like normal, chain or local
+  - name: description
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: interaction_behaviors
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: interaction_behaviors
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `interaction_behaviors` (
+      `id` int(11) NOT NULL,
+      `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'For describing the interaction behavior like normal, chain or local',
+      `description` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+- name: interaction_categories
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: title
+    type: varchar(128)
+    nullable: false
+    default: null
+    comment: ""
+  - name: title_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: order
+    type: int(5)
+    nullable: false
+    default: "0"
+    comment: Order in which the categories should be sorted
+  - name: _context
+    type: varchar(55)
+    nullable: true
+    default: null
+    comment: Comments/notes about the category
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: interaction_categories
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: interaction_categories
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `interaction_categories` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `title` varchar(128) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+      `title_i18n` int(11) DEFAULT NULL,
+      `order` int(5) NOT NULL DEFAULT '0' COMMENT 'Order in which the categories should be sorted',
+      `_context` varchar(55) DEFAULT NULL COMMENT 'Comments/notes about the category',
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1
+- name: interaction_chain_input_parameters
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: interaction_chain_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: parameter_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: target_parameter_id
+    type: int(11)
+    nullable: true
+    default: null
+    comment: Destination parameter to copy the chained value to. If '0', the destination/target parameter should have the same name as source parameter
+  - name: value
+    type: varchar(128)
+    nullable: false
+    default: ""
+    comment: A default/fixed value for the chain, if parameter_source_id==0
+  - name: source_id
+    type: int(1)
+    nullable: false
+    default: "1"
+    comment: From interaction_chain_parameter_source table. 1=Response, 2=Request.
+  - name: is_value_frozen
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: If true, parameter value is copied but it is not editable
+  - name: is_value_hidden
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: If true, parameter value is copied but it is not visible on the UI
+  indexes:
+  - name: fk_chain_param_interaction_chain_id_index
+    def: KEY fk_chain_param_interaction_chain_id_index (interaction_chain_id) USING BTREE
+    table: interaction_chain_input_parameters
+    columns:
+    - interaction_chain_id
+    comment: ""
+  - name: fk_chain_param_parameter_id_index
+    def: KEY fk_chain_param_parameter_id_index (parameter_id) USING BTREE
+    table: interaction_chain_input_parameters
+    columns:
+    - parameter_id
+    comment: ""
+  - name: fk_chain_param_target_parameter_id_idx
+    def: KEY fk_chain_param_target_parameter_id_idx (target_parameter_id) USING BTREE
+    table: interaction_chain_input_parameters
+    columns:
+    - target_parameter_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: interaction_chain_input_parameters
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_chain_param_interaction_chain_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (interaction_chain_id) REFERENCES interaction_chains (id)
+    table: interaction_chain_input_parameters
+    referenceTable: interaction_chains
+    columns:
+    - interaction_chain_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_chain_param_parameter_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (parameter_id) REFERENCES parameters (id)
+    table: interaction_chain_input_parameters
+    referenceTable: parameters
+    columns:
+    - parameter_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_chain_param_target_parameter_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (target_parameter_id) REFERENCES parameters (id)
+    table: interaction_chain_input_parameters
+    referenceTable: parameters
+    columns:
+    - target_parameter_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: interaction_chain_input_parameters
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `interaction_chain_input_parameters` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `interaction_chain_id` int(11) NOT NULL,
+      `parameter_id` int(11) NOT NULL,
+      `target_parameter_id` int(11) DEFAULT NULL COMMENT 'Destination parameter to copy the chained value to. If ''0'', the destination/target parameter should have the same name as source parameter',
+      `value` varchar(128) NOT NULL DEFAULT '' COMMENT 'A default/fixed value for the chain, if parameter_source_id==0',
+      `source_id` int(1) NOT NULL DEFAULT '1' COMMENT 'From interaction_chain_parameter_source table. 1=Response, 2=Request.',
+      `is_value_frozen` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'If true, parameter value is copied but it is not editable',
+      `is_value_hidden` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'If true, parameter value is copied but it is not visible on the UI',
+      PRIMARY KEY (`id`),
+      KEY `fk_chain_param_interaction_chain_id_index` (`interaction_chain_id`),
+      KEY `fk_chain_param_parameter_id_index` (`parameter_id`),
+      KEY `fk_chain_param_target_parameter_id_idx` (`target_parameter_id`),
+      CONSTRAINT `fk_chain_param_interaction_chain_id` FOREIGN KEY (`interaction_chain_id`) REFERENCES `interaction_chains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+      CONSTRAINT `fk_chain_param_parameter_id` FOREIGN KEY (`parameter_id`) REFERENCES `parameters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+      CONSTRAINT `fk_chain_param_target_parameter_id` FOREIGN KEY (`target_parameter_id`) REFERENCES `parameters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE=InnoDB AUTO_INCREMENT=1985 DEFAULT CHARSET=latin1
+- name: interaction_chain_parameter_sources
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(1)
+    nullable: false
+    default: null
+    comment: ""
+  - name: name
+    type: varchar(20)
+    nullable: false
+    default: null
+    comment: ""
+  - name: description
+    type: varchar(120)
+    nullable: false
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: interaction_chain_parameter_sources
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: interaction_chain_parameter_sources
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `interaction_chain_parameter_sources` (
+      `id` int(1) NOT NULL,
+      `name` varchar(20) NOT NULL,
+      `description` varchar(120) NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1
+- name: interaction_chains
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: response_interaction_map_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: chain_behavior_id
+    type: int(11)
+    nullable: false
+    default: "1"
+    comment: |
+      chain behavior if this will normal, external url, payment_gateway etc
+      1=Normal Chain (Normal Chain for bi-directional linking tf-response with new tf-request)
+      2=External URL (For opening external URL like shopping sites, sbi url for H2H etc)
+      3=Payment Gatement (For bi-directional linking of tf-request,tf-response and external payment gateway website)
+  - name: next_interaction_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label
+    type: varchar(255)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: is_hidden
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Do not show the chain. It is activted automatically (maybe through Customer-Profile-Stub, etc.)
+  - name: is_automatic
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Don't ask/suggest; just goto the chained trxn (if True)
+  - name: is_going_back
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Is the chain meant to go back to an EXISTING/VISIBLE REQUEST CARD (retry) in the interaction flow?
+  - name: go_back_steps
+    type: int(2)
+    nullable: false
+    default: "0"
+    comment: Manual number of steps to go-back (replace prev trxn boxes). If is_going_back is 1, ignore next_interaction_id (specially, if not found) and find next interaction card by going back the specified number of steps
+  - name: auto_fire_next_request
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Automatically fire/submit the next chained request (Unless the user is going back to EDIT that request-card)
+  - name: multi_list_items
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: chain_metadata
+    type: varchar(512)
+    nullable: false
+    default: ""
+    comment: Chain multiple items from list (if any parameter chains to a list)? The corresponding list will give option to select multiple rows.
+  - name: chain_all_request_params
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: |
+      Chain all parameters from request card that match in name with next interaction request.
+      is_frozen=0, is_hidden=0
+  - name: chain_all_response_params
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: |
+      Chain all parameters from response card that match in name with next interaction request.
+      is_frozen=0, is_hidden=0
+  - name: validate
+    type: varchar(255)
+    nullable: false
+    default: ""
+    comment: |
+      Use an expression to evaluate the visibility of chain based on other parameters (in response).
+      Expression example: ['&&', ['==', '{a}', '{b}'], ['<', '{a}', '{c}']]
+      (I.e, Enable this chain when parameters a == b and a < c)
+  - name: icon
+    type: varchar(30)
+    nullable: false
+    default: go
+    comment:
+             icon for chain: go/repeat/refresh/back/add/remove/edit/etc.
+  - name: toast
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: ""
+  - name: toast_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: _context
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: After a request is loaded due to this chain, auto-fire it.
+  indexes:
+  - name: fk_chain_next_interaction_id_index
+    def: KEY fk_chain_next_interaction_id_index (next_interaction_id) USING BTREE
+    table: interaction_chains
+    columns:
+    - next_interaction_id
+    comment: ""
+  - name: fk_chain_response_id_index
+    def: KEY fk_chain_response_id_index (response_interaction_map_id) USING BTREE
+    table: interaction_chains
+    columns:
+    - response_interaction_map_id
+    comment: ""
+  - name: fk_interaction_chains_behavior_id_idx
+    def: KEY fk_interaction_chains_behavior_id_idx (chain_behavior_id) USING BTREE
+    table: interaction_chains
+    columns:
+    - chain_behavior_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: interaction_chains
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_chain_next_interaction_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (next_interaction_id) REFERENCES interactions (id)
+    table: interaction_chains
+    referenceTable: interactions
+    columns:
+    - next_interaction_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_chain_response_interaction_map_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (response_interaction_map_id) REFERENCES response_interaction_map (id)
+    table: interaction_chains
+    referenceTable: response_interaction_map
+    columns:
+    - response_interaction_map_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_interaction_chains_behavior_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (chain_behavior_id) REFERENCES chain_behaviors (id)
+    table: interaction_chains
+    referenceTable: chain_behaviors
+    columns:
+    - chain_behavior_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: interaction_chains
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: "CREATE TABLE `interaction_chains` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `response_interaction_map_id` int(11) NOT NULL,\n  `chain_behavior_id` int(11) NOT NULL DEFAULT '1' COMMENT 'chain behavior if this will normal, external url, payment_gateway etc\\n1=Normal Chain (Normal Chain for bi-directional linking tf-response with new tf-request)\\n2=External URL (For opening external URL like shopping sites, sbi url for H2H etc)\\n3=Payment Gatement (For bi-directional linking of tf-request,tf-response and external payment gateway website)',\n  `next_interaction_id` int(11) NOT NULL,\n  `label` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `label_i18n` int(11) DEFAULT NULL,\n  `is_hidden` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Do not show the chain. It is activted automatically (maybe through Customer-Profile-Stub, etc.)',\n  `is_automatic` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Don''t ask/suggest; just goto the chained trxn (if True)',\n  `is_going_back` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Is the chain meant to go back to an EXISTING/VISIBLE REQUEST CARD (retry) in the interaction flow?',\n  `go_back_steps` int(2) NOT NULL DEFAULT '0' COMMENT 'Manual number of steps to go-back (replace prev trxn boxes). If is_going_back is 1, ignore next_interaction_id (specially, if not found) and find next interaction card by going back the specified number of steps',\n  `auto_fire_next_request` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Automatically fire/submit the next chained request (Unless the user is going back to EDIT that request-card)',\n  `multi_list_items` decimal(1,0) NOT NULL DEFAULT '0',\n  `chain_metadata` varchar(512) NOT NULL DEFAULT '' COMMENT 'Chain multiple items from list (if any parameter chains to a list)? The corresponding list will give option to select multiple rows.',\n  `chain_all_request_params` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Chain all parameters from request card that match in name with next interaction request.\\nis_frozen=0, is_hidden=0',\n  `chain_all_response_params` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Chain all parameters from response card that match in name with next interaction request.\\nis_frozen=0, is_hidden=0',\n  `validate` varchar(255) NOT NULL DEFAULT '' COMMENT 'Use an expression to evaluate the visibility of chain based on other parameters (in response).\\nExpression example: [''&&'', [''=='', ''{a}'', ''{b}''], [''<'', ''{a}'', ''{c}'']]\\n(I.e, Enable this chain when parameters a == b and a < c)',\n  `icon` varchar(30) NOT NULL DEFAULT 'go' COMMENT 'icon for chain: go/repeat/refresh/back/add/remove/edit/etc.',\n  `toast` varchar(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `toast_i18n` int(11) DEFAULT NULL,\n  `_context` varchar(100) DEFAULT NULL COMMENT 'After a request is loaded due to this chain, auto-fire it.',\n  PRIMARY KEY (`id`),\n  KEY `fk_chain_response_id_index` (`response_interaction_map_id`),\n  KEY `fk_chain_next_interaction_id_index` (`next_interaction_id`),\n  KEY `fk_interaction_chains_behavior_id_idx` (`chain_behavior_id`),\n  CONSTRAINT `fk_chain_next_interaction_id` FOREIGN KEY (`next_interaction_id`) REFERENCES `interactions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_chain_response_interaction_map_id` FOREIGN KEY (`response_interaction_map_id`) REFERENCES `response_interaction_map` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_interaction_chains_behavior_id` FOREIGN KEY (`chain_behavior_id`) REFERENCES `chain_behaviors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=844 DEFAULT CHARSET=latin1"
+- name: interaction_group_links
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: group_interaction_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: Source interaction_id
+  - name: link_interaction_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: Destination link interaction_id
+  - name: chained_parameter_list
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: |
+      Array of parameter objects to chain on link-click
+      Eg: [{"name":"mobile", "value":"5464564564", "is_frozen":1}]
+  - name: order
+    type: int(2)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: label
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: Force alternate label
+  - name: label_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: disabled
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: _context
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: fk_interaction_group_links_gr_idx
+    def: KEY fk_interaction_group_links_gr_idx (group_interaction_id) USING BTREE
+    table: interaction_group_links
+    columns:
+    - group_interaction_id
+    comment: ""
+  - name: fk_interaction_group_links_ln_idx
+    def: KEY fk_interaction_group_links_ln_idx (link_interaction_id) USING BTREE
+    table: interaction_group_links
+    columns:
+    - link_interaction_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: interaction_group_links
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_interaction_group_links_gr
+    type: FOREIGN KEY
+    def: FOREIGN KEY (group_interaction_id) REFERENCES interactions (id)
+    table: interaction_group_links
+    referenceTable: interactions
+    columns:
+    - group_interaction_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_interaction_group_links_ln
+    type: FOREIGN KEY
+    def: FOREIGN KEY (link_interaction_id) REFERENCES interactions (id)
+    table: interaction_group_links
+    referenceTable: interactions
+    columns:
+    - link_interaction_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: interaction_group_links
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: "CREATE TABLE `interaction_group_links` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `group_interaction_id` int(11) NOT NULL COMMENT 'Source interaction_id',\n  `link_interaction_id` int(11) NOT NULL COMMENT 'Destination link interaction_id',\n  `chained_parameter_list` varchar(250) DEFAULT NULL COMMENT 'Array of parameter objects to chain on link-click\\nEg: [{\"name\":\"mobile\", \"value\":\"5464564564\", \"is_frozen\":1}]',\n  `order` int(2) NOT NULL DEFAULT '0',\n  `label` varchar(100) DEFAULT NULL COMMENT 'Force alternate label',\n  `label_i18n` int(11) DEFAULT NULL,\n  `disabled` int(1) NOT NULL DEFAULT '0',\n  `_context` varchar(250) DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  KEY `fk_interaction_group_links_gr_idx` (`group_interaction_id`),\n  KEY `fk_interaction_group_links_ln_idx` (`link_interaction_id`),\n  CONSTRAINT `fk_interaction_group_links_gr` FOREIGN KEY (`group_interaction_id`) REFERENCES `interactions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_interaction_group_links_ln` FOREIGN KEY (`link_interaction_id`) REFERENCES `interactions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1"
+- name: interactions
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: interaction_behavior_id
+    type: int(11)
+    nullable: false
+    default: "1"
+    comment: |
+      interaction behavior if this will normal, local etc
+      1=Normal Interaction (request SimpliBank)
+      2=Flow
+      3=Local Interaction (no server request. Use default response set in database)
+  - name: meta
+    type: varchar(128)
+    nullable: true
+    default: null
+    comment: Metadata as JSON formatted String. {    "is_store":1,    // Treat as EkoStore   }
+  - name: interaction_type_id
+    type: int(11)
+    nullable: true
+    default: null
+    comment: Code to uniquely identify a transaction for a developer
+  - name: uri
+    type: varchar(500)
+    nullable: true
+    default: null
+    comment: |
+      RESTful URI path endpoint for the interaction. May contain parameter_name variables under curly brackets to be replaced by actual parameter values.
+      Eg: /customers/mobile_number:{customer_id}
+  - name: real_uri
+    type: varchar(500)
+    nullable: true
+    default: null
+    comment: |
+      Actual Simplibank URI path endpoint. Eg: For gateway, the request first goes to Gateway tnd then to Simplibank. 
+      The 'uri' contains Gateway endpoint whereas the 'real_uri' contains the Simplibank endpoint
+  - name: uri_base
+    type: varchar(500)
+    nullable: true
+    default: null
+    comment: URI Base of the API, if other than Simplibank. For example, Gateway or any other external service that we are using directly from Connect
+  - name: uri_base_uat
+    type: varchar(500)
+    nullable: true
+    default: null
+    comment: URI Base of the API for UAT, if other than Simplibank. For example, Gateway or any other external service that we are using directly from Connect
+  - name: uri_root_id
+    type: int(3)
+    nullable: false
+    default: "0"
+    comment:
+             ID representing a different API URI root path to use. Eg: 1 = "/payment-collection/api/v1"
+  - name: group_interaction_ids
+    type: varchar(256)
+    nullable: false
+    default: ""
+    comment:
+             A set of comma-separated interaction_ids that are to be shown in the GROUP (Tab-like interface on Connect). Eg: Manage My Account
+  - name: save_interaction_type_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: List of interaction_ids if it is an interaction of type GROUP. Show a menu of multiple interactions.
+  - name: fixed_params
+    type: varchar(500)
+    nullable: false
+    default: ""
+    comment: |
+      JSON Object containing fixed parameters to introduce in the transaction request. Mostly useful with transaction flows.
+      Eg: {"is_kyc_mandetory":1}
+  - name: label
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_i18n
+    type: int(8)
+    nullable: true
+    default: null
+    comment: ""
+  - name: label_response
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_response_i18n
+    type: int(8)
+    nullable: true
+    default: null
+    comment: ""
+  - name: is_visible
+    type: decimal(1,0)
+    nullable: false
+    default: "1"
+    comment: Should it be shown directly on main UI? If not, it will only be visible through an Interaction-Chain
+  - name: is_customer_visible
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Is visible in CustaView (to the customer-facing screen)?
+  - name: flow_start_interaction_id
+    type: int(11)
+    nullable: true
+    default: null
+    comment:
+             id of the first Interaction to start the work-flow with. (eg: Get-Registered-Recipient's-List in Send-Money)
+  - name: interaction_category_id
+    type: int(11)
+    nullable: true
+    default: null
+    comment: id of a category (from INTERACTION_CATEGORIES table) to which this interaction belongs
+  - name: order
+    type: int(5)
+    nullable: false
+    default: "0"
+    comment: Sort order for interactions
+  - name: confirm_submit_id
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: |
+      Show a confirmation dialog before submitting request?
+      0: No
+      1: Yes. "Are You Sure?"
+      2: Yes. "I Agree"
+  - name: disable_redo
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Disable the transaction to be edited and retried (after going back to request card)?
+  - name: is_cacheable
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Can the response be cached?
+  - name: cache_timeout
+    type: varchar(15)
+    nullable: true
+    default: null
+    comment:
+             0=Infinite, D=Day, M=Month, Y=Year. E.g: 0 / 1D / 2M / 4Y etc.
+  - name: http_method
+    type: varchar(6)
+    nullable: false
+    default: POST
+    comment: GET / POST / PUT / DELETE
+  - name: history_label
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: How to represent the response of this transaction in History.
+  - name: history_label_i18n
+    type: int(8)
+    nullable: true
+    default: null
+    comment: ""
+  - name: description
+    type: varchar(250)
+    nullable: false
+    default: null
+    comment: ""
+  - name: description_i18n
+    type: int(8)
+    nullable: true
+    default: null
+    comment: ""
+  - name: tagline
+    type: varchar(50)
+    nullable: false
+    default: ""
+    comment: Short tagline/description
+  - name: tagline_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: is_disabled
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: brand_category_ids
+    type: varchar(45)
+    nullable: false
+    default: ""
+    comment: Comma separated list of IDs (from table brand_categories) that define which Store Category the brand/service belongs to
+  - name: icon
+    type: varchar(35)
+    nullable: false
+    default: ""
+    comment: Name of an icon as per the Material Design Icons list
+  - name: ext_icon
+    type: varchar(200)
+    nullable: false
+    default: ""
+    comment: External Icon URI for the Product/Brand
+  - name: logo
+    type: varchar(200)
+    nullable: false
+    default: ""
+    comment:
+             LOGO / Branding image absolute URI to show on top-right side of request cards. MAX-HEIGHT: 50px
+  - name: help_media_urls
+    type: varchar(1500)
+    nullable: true
+    default: null
+    comment: |
+      Comma separated list of media URLs providing help/walkthrough for this transaction. It could be
+      1. image URL
+      2. Full URL for help document (usually a public Google doc)
+      3. video-ID of a Youtube video
+  - name: help_media_urls_i18n
+    type: int(8)
+    nullable: true
+    default: null
+    comment: ""
+  - name: earn
+    type: varchar(45)
+    nullable: false
+    default: ""
+    comment: How much a merchant will earn from this product
+  - name: earn_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: beta
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: 1 = beta feature
+  - name: _context
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: Comment about interaction for interrnal reference
+  indexes:
+  - name: fk_interaction_type_id_idx
+    def: KEY fk_interaction_type_id_idx (interaction_type_id) USING BTREE
+    table: interactions
+    columns:
+    - interaction_type_id
+    comment: ""
+  - name: fk_interactions_flow_start_interaction_id_idx
+    def: KEY fk_interactions_flow_start_interaction_id_idx (flow_start_interaction_id) USING BTREE
+    table: interactions
+    columns:
+    - flow_start_interaction_id
+    comment: ""
+  - name: fk_interactions_interaction_behavior_id_idx
+    def: KEY fk_interactions_interaction_behavior_id_idx (interaction_behavior_id) USING BTREE
+    table: interactions
+    columns:
+    - interaction_behavior_id
+    comment: ""
+  - name: fk_interactions_interaction_category_id_idx
+    def: KEY fk_interactions_interaction_category_id_idx (interaction_category_id) USING BTREE
+    table: interactions
+    columns:
+    - interaction_category_id
+    comment: ""
+  - name: fk_interactions_uri_root_id_idx
+    def: KEY fk_interactions_uri_root_id_idx (uri_root_id) USING BTREE
+    table: interactions
+    columns:
+    - uri_root_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: interactions
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_interactions_flow_start_interaction_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (flow_start_interaction_id) REFERENCES interactions (id)
+    table: interactions
+    referenceTable: interactions
+    columns:
+    - flow_start_interaction_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_interactions_interaction_behavior_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (interaction_behavior_id) REFERENCES interaction_behaviors (id)
+    table: interactions
+    referenceTable: interaction_behaviors
+    columns:
+    - interaction_behavior_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_interactions_interaction_category_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (interaction_category_id) REFERENCES interaction_categories (id)
+    table: interactions
+    referenceTable: interaction_categories
+    columns:
+    - interaction_category_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_interactions_uri_root_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (uri_root_id) REFERENCES uri_root_master (id)
+    table: interactions
+    referenceTable: uri_root_master
+    columns:
+    - uri_root_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: interactions
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: "CREATE TABLE `interactions` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `interaction_behavior_id` int(11) NOT NULL DEFAULT '1' COMMENT 'interaction behavior if this will normal, local etc\\n1=Normal Interaction (request SimpliBank)\\n2=Flow\\n3=Local Interaction (no server request. Use default response set in database)',\n  `meta` varchar(128) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Metadata as JSON formatted String. {    \"is_store\":1,    // Treat as EkoStore   }',\n  `interaction_type_id` int(11) DEFAULT NULL COMMENT 'Code to uniquely identify a transaction for a developer',\n  `uri` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT 'RESTful URI path endpoint for the interaction. May contain parameter_name variables under curly brackets to be replaced by actual parameter values.\\nEg: /customers/mobile_number:{customer_id}\\n',\n  `real_uri` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Actual Simplibank URI path endpoint. Eg: For gateway, the request first goes to Gateway tnd then to Simplibank. \\nThe ''uri'' contains Gateway endpoint whereas the ''real_uri'' contains the Simplibank endpoint',\n  `uri_base` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT 'URI Base of the API, if other than Simplibank. For example, Gateway or any other external service that we are using directly from Connect',\n  `uri_base_uat` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT 'URI Base of the API for UAT, if other than Simplibank. For example, Gateway or any other external service that we are using directly from Connect',\n  `uri_root_id` int(3) NOT NULL DEFAULT '0' COMMENT 'ID representing a different API URI root path to use. Eg: 1 = \"/payment-collection/api/v1\"',\n  `group_interaction_ids` varchar(256) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'A set of comma-separated interaction_ids that are to be shown in the GROUP (Tab-like interface on Connect). Eg: Manage My Account',\n  `save_interaction_type_id` int(11) NOT NULL DEFAULT '0' COMMENT 'List of interaction_ids if it is an interaction of type GROUP. Show a menu of multiple interactions.',\n  `fixed_params` varchar(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'JSON Object containing fixed parameters to introduce in the transaction request. Mostly useful with transaction flows.\\nEg: {\"is_kyc_mandetory\":1}',\n  `label` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `label_i18n` int(8) DEFAULT NULL,\n  `label_response` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `label_response_i18n` int(8) DEFAULT NULL,\n  `is_visible` decimal(1,0) NOT NULL DEFAULT '1' COMMENT 'Should it be shown directly on main UI? If not, it will only be visible through an Interaction-Chain',\n  `is_customer_visible` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Is visible in CustaView (to the customer-facing screen)?',\n  `flow_start_interaction_id` int(11) DEFAULT NULL COMMENT 'id of the first Interaction to start the work-flow with. (eg: Get-Registered-Recipient''s-List in Send-Money)',\n  `interaction_category_id` int(11) DEFAULT NULL COMMENT 'id of a category (from INTERACTION_CATEGORIES table) to which this interaction belongs',\n  `order` int(5) NOT NULL DEFAULT '0' COMMENT 'Sort order for interactions',\n  `confirm_submit_id` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Show a confirmation dialog before submitting request?\\n0: No\\n1: Yes. \"Are You Sure?\"\\n2: Yes. \"I Agree\"',\n  `disable_redo` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Disable the transaction to be edited and retried (after going back to request card)?',\n  `is_cacheable` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Can the response be cached?',\n  `cache_timeout` varchar(15) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT '0=Infinite, D=Day, M=Month, Y=Year. E.g: 0 / 1D / 2M / 4Y etc.',\n  `http_method` varchar(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'POST' COMMENT 'GET / POST / PUT / DELETE',\n  `history_label` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL COMMENT 'How to represent the response of this transaction in History.',\n  `history_label_i18n` int(8) DEFAULT NULL,\n  `description` varchar(250) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `description_i18n` int(8) DEFAULT NULL,\n  `tagline` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Short tagline/description',\n  `tagline_i18n` int(11) DEFAULT NULL,\n  `is_disabled` decimal(1,0) NOT NULL DEFAULT '0',\n  `brand_category_ids` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'Comma separated list of IDs (from table brand_categories) that define which Store Category the brand/service belongs to',\n  `icon` varchar(35) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'Name of an icon as per the Material Design Icons list',\n  `ext_icon` varchar(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'External Icon URI for the Product/Brand',\n  `logo` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'LOGO / Branding image absolute URI to show on top-right side of request cards. MAX-HEIGHT: 50px',\n  `help_media_urls` varchar(1500) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Comma separated list of media URLs providing help/walkthrough for this transaction. It could be\\n1. image URL\\n2. Full URL for help document (usually a public Google doc)\\n3. video-ID of a Youtube video',\n  `help_media_urls_i18n` int(8) DEFAULT NULL,\n  `earn` varchar(45) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '' COMMENT 'How much a merchant will earn from this product',\n  `earn_i18n` int(11) DEFAULT NULL,\n  `beta` int(1) NOT NULL DEFAULT '0' COMMENT '1 = beta feature',\n  `_context` varchar(250) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL COMMENT 'Comment about interaction for interrnal reference',\n  PRIMARY KEY (`id`),\n  KEY `fk_interactions_flow_start_interaction_id_idx` (`flow_start_interaction_id`),\n  KEY `fk_interactions_interaction_category_id_idx` (`interaction_category_id`),\n  KEY `fk_interaction_type_id_idx` (`interaction_type_id`),\n  KEY `fk_interactions_interaction_behavior_id_idx` (`interaction_behavior_id`),\n  KEY `fk_interactions_uri_root_id_idx` (`uri_root_id`),\n  CONSTRAINT `fk_interactions_flow_start_interaction_id` FOREIGN KEY (`flow_start_interaction_id`) REFERENCES `interactions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_interactions_interaction_behavior_id` FOREIGN KEY (`interaction_behavior_id`) REFERENCES `interaction_behaviors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_interactions_interaction_category_id` FOREIGN KEY (`interaction_category_id`) REFERENCES `interaction_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_interactions_uri_root_id` FOREIGN KEY (`uri_root_id`) REFERENCES `uri_root_master` (`id`) ON UPDATE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=605 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"
+- name: list_elements
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: parameter_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: value
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label
+    type: varchar(150)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: description
+    type: varchar(150)
+    nullable: false
+    default: null
+    comment: ""
+  - name: description_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: order
+    type: int(5)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: is_disabled
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: is_hidden
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: dependent_params
+    type: varchar(500)
+    nullable: false
+    default: '[]'
+    comment: "Change properties of another parameter when this list-element is selected.\\nEg: [{\"
+  - name: icon
+    type: varchar(35)
+    nullable: false
+    default: ""
+    comment: Name of an icon as per the Material Design Icons list
+  indexes:
+  - name: fk_list_element_parameter_id_index
+    def: KEY fk_list_element_parameter_id_index (parameter_id) USING BTREE
+    table: list_elements
+    columns:
+    - parameter_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: list_elements
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_list_element_parameter_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (parameter_id) REFERENCES parameters (id)
+    table: list_elements
+    referenceTable: parameters
+    columns:
+    - parameter_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: list_elements
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: "CREATE TABLE `list_elements` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `parameter_id` int(11) NOT NULL,\n  `value` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,\n  `label` varchar(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `label_i18n` int(11) DEFAULT NULL,\n  `description` varchar(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `description_i18n` int(11) DEFAULT NULL,\n  `order` int(5) NOT NULL DEFAULT '0',\n  `is_disabled` int(1) NOT NULL DEFAULT '0',\n  `is_hidden` int(1) NOT NULL DEFAULT '0',\n  `dependent_params` varchar(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '[]' COMMENT 'Change properties of another parameter when this list-element is selected.\\\\nEg: [{\"name\":\"amount\",\"postfix\":100,\"pattern\":\"^[0-9]*100$\",\"pattern_error\":\"Amount must end with 100\"}]',\n  `icon` varchar(35) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '' COMMENT 'Name of an icon as per the Material Design Icons list',\n  PRIMARY KEY (`id`),\n  KEY `fk_list_element_parameter_id_index` (`parameter_id`),\n  CONSTRAINT `fk_list_element_parameter_id` FOREIGN KEY (`parameter_id`) REFERENCES `parameters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=742 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"
+- name: parameter_separator_types_master
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: type
+    type: varchar(45)
+    nullable: false
+    default: null
+    comment: ""
+  - name: _context
+    type: varchar(145)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: parameter_separator_types_master
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: parameter_separator_types_master
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `parameter_separator_types_master` (
+      `id` int(11) NOT NULL,
+      `type` varchar(45) NOT NULL,
+      `_context` varchar(145) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+- name: parameter_types
+  type: BASE TABLE
+  comment: This tables stores possible category of parameters.
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: name
+    type: varchar(45)
+    nullable: false
+    default: null
+    comment: ""
+  - name: description
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: parameter_types
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: parameter_types
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `parameter_types` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `name` varchar(45) NOT NULL,
+      `description` varchar(250) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=latin1 COMMENT='This tables stores possible category of parameters.'
+- name: parameters
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: parameter_type_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: type_metadata
+    type: varchar(500)
+    nullable: true
+    default: null
+    comment: |
+      Extra info about some parameter types.
+      DateTime format (eg: ddMMyyyy), Currency code (eg: INR) etc.
+      DateTime format specified as Java SimpleDateFormat specifiers (http://developer.android.com/reference/java/text/SimpleDateFormat.html).
+  - name: name
+    type: varchar(50)
+    nullable: true
+    default: ""
+    comment: Parameter name to be sent as name/value pair to the server. If blank, the parameter is not sent to the server.
+  - name: value
+    type: varchar(1000)
+    nullable: false
+    default: null
+    comment: ""
+  - name: value_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: label
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: label_response
+    type: varchar(100)
+    nullable: false
+    default: null
+    comment: ""
+  - name: label_response_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: pattern
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: ""
+  - name: pattern_keypress
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: ""
+  - name: pattern_error
+    type: varchar(200)
+    nullable: true
+    default: null
+    comment: Error message in case the user entry does not match the valid regex pattern
+  - name: pattern_format
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: ""
+  - name: min
+    type: varchar(15)
+    nullable: false
+    default: "0"
+    comment: |
+      Minimum value for validation of Numeric/Money/DateTime types.
+      For DateTime: specify range in D=Days (default), W=Weeks, M=Months, Y=Years, etc.
+      Eg: Min=-3 and Max=0 means from 3 days ago to Today (0)
+  - name: max
+    type: varchar(15)
+    nullable: false
+    default: "0"
+    comment: |
+      Maximum value for validation of Numeric/Money/DateTime types.
+      For DateTime: specify range in D=Days (default), W=Weeks, M=Months, Y=Years, etc.
+      Eg: Min=-3 and Max=0 means from 3 days ago to Today (0)
+  - name: length_min
+    type: int(4)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: length_max
+    type: int(4)
+    nullable: false
+    default: "250"
+    comment: ""
+  - name: lines_min
+    type: int(2)
+    nullable: false
+    default: "0"
+    comment: For multi-line text input field
+  - name: lines_max
+    type: int(2)
+    nullable: false
+    default: "0"
+    comment: For multi-line text input field
+  - name: mime_types
+    type: varchar(250)
+    nullable: false
+    default: null
+    comment: Accepted mime-types for RAW data (file upload)
+  - name: is_masked
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment:
+             Mask field with * (eg: for Password field)
+  - name: is_secure
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Handle data securely. Do not cache.
+  - name: allow_multiple_selection
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Allow multi-select in a LIST type parameter
+  - name: multiple_selection_separator
+    type: varchar(10)
+    nullable: false
+    default: null
+    comment: To separate multiple items when (for multi-select list)
+  - name: text_case_type_id
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: "0:default, 1:upper, 2:lower, 3:camel, 4:sentence"
+  - name: link
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: |
+      Any external URL to show with the parameter. Eg: Show link for Aadhaar/Voter-card Verification sites.
+      Value in <label>|<url> format. Eg: Verify|https://eaadhaar.uidai.gov.in
+  - name: link_label
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  - name: link_label_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: description
+    type: varchar(250)
+    nullable: false
+    default: null
+    comment: ""
+  - name: description_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: _context
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: Any comment for internal development usage
+  indexes:
+  - name: fk_parameter_type_id_index
+    def: KEY fk_parameter_type_id_index (parameter_type_id) USING BTREE
+    table: parameters
+    columns:
+    - parameter_type_id
+    comment: ""
+  - name: fk_parameters_text_case_type_id_idx
+    def: KEY fk_parameters_text_case_type_id_idx (text_case_type_id) USING BTREE
+    table: parameters
+    columns:
+    - text_case_type_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: parameters
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_parameter_type_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (parameter_type_id) REFERENCES parameter_types (id)
+    table: parameters
+    referenceTable: parameter_types
+    columns:
+    - parameter_type_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_parameters_text_case_type_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (text_case_type_id) REFERENCES text_case_types (id)
+    table: parameters
+    referenceTable: text_case_types
+    columns:
+    - text_case_type_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: parameters
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: "CREATE TABLE `parameters` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `parameter_type_id` int(11) NOT NULL,\n  `type_metadata` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL COMMENT 'Extra info about some parameter types.\\nDateTime format (eg: ddMMyyyy), Currency code (eg: INR) etc.\\nDateTime format specified as Java SimpleDateFormat specifiers (http://developer.android.com/reference/java/text/SimpleDateFormat.html).',\n  `name` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT '' COMMENT 'Parameter name to be sent as name/value pair to the server. If blank, the parameter is not sent to the server.',\n  `value` varchar(1000) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `value_i18n` int(11) DEFAULT NULL,\n  `label` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `label_i18n` int(11) DEFAULT NULL,\n  `label_response` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `label_response_i18n` int(11) DEFAULT NULL,\n  `pattern` varchar(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `pattern_keypress` varchar(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `pattern_error` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL COMMENT 'Error message in case the user entry does not match the valid regex pattern',\n  `pattern_format` varchar(250) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,\n  `min` varchar(15) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '0' COMMENT 'Minimum value for validation of Numeric/Money/DateTime types.\\nFor DateTime: specify range in D=Days (default), W=Weeks, M=Months, Y=Years, etc.\\nEg: Min=-3 and Max=0 means from 3 days ago to Today (0)',\n  `max` varchar(15) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '0' COMMENT 'Maximum value for validation of Numeric/Money/DateTime types.\\nFor DateTime: specify range in D=Days (default), W=Weeks, M=Months, Y=Years, etc.\\nEg: Min=-3 and Max=0 means from 3 days ago to Today (0)',\n  `length_min` int(4) NOT NULL DEFAULT '0',\n  `length_max` int(4) NOT NULL DEFAULT '250',\n  `lines_min` int(2) NOT NULL DEFAULT '0' COMMENT 'For multi-line text input field',\n  `lines_max` int(2) NOT NULL DEFAULT '0' COMMENT 'For multi-line text input field',\n  `mime_types` varchar(250) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT 'Accepted mime-types for RAW data (file upload)',\n  `is_masked` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Mask field with * (eg: for Password field) ',\n  `is_secure` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Handle data securely. Do not cache.',\n  `allow_multiple_selection` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Allow multi-select in a LIST type parameter',\n  `multiple_selection_separator` varchar(10) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT 'To separate multiple items when (for multi-select list)',\n  `text_case_type_id` int(1) NOT NULL DEFAULT '0' COMMENT '0:default, 1:upper, 2:lower, 3:camel, 4:sentence',\n  `link` varchar(500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL COMMENT 'Any external URL to show with the parameter. Eg: Show link for Aadhaar/Voter-card Verification sites.\\nValue in <label>|<url> format. Eg: Verify|https://eaadhaar.uidai.gov.in',\n  `link_label` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,\n  `link_label_i18n` int(11) DEFAULT NULL,\n  `description` varchar(250) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n  `description_i18n` int(11) DEFAULT NULL,\n  `_context` varchar(250) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL COMMENT 'Any comment for internal development usage',\n  PRIMARY KEY (`id`),\n  KEY `fk_parameter_type_id_index` (`parameter_type_id`),\n  KEY `fk_parameters_text_case_type_id_idx` (`text_case_type_id`),\n  CONSTRAINT `fk_parameter_type_id` FOREIGN KEY (`parameter_type_id`) REFERENCES `parameter_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_parameters_text_case_type_id` FOREIGN KEY (`text_case_type_id`) REFERENCES `text_case_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=1457 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"
+- name: request_expressions
+  type: BASE TABLE
+  comment: Use mathematical expressions using values of other parameters to calculate visibility, enable/disable or new value of other parameters
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: interaction_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: expression
+    type: varchar(500)
+    nullable: false
+    default: null
+    comment: |
+      Expression to evaluate. example: 
+      ['&&', ['==', '{a:num}', '{b}'], ['<', '{a}', '{c}']]
+      (I.e, (a == b and a < c)) Evaluates to true/false.
+      Also, treat 'a' as a number (without quotes)
+  - name: on_true
+    type: varchar(500)
+    nullable: false
+    default: ""
+    comment: |
+      Dependent parameters to update if the expression value evaluates to true
+      [
+      	{"name":"<param_name>", "visibility":1, "value":"{{}}"}
+      ]
+      Here, {{}}, if used,  is replaced by value of the expression
+  - name: on_false
+    type: varchar(500)
+    nullable: false
+    default: ""
+    comment: |
+      Dependent parameters to update if the expression value evaluates to false
+      [
+      	{"name":"<param_name>", "visibility":1, "value":"{{}}"}
+      ]
+      Here, {{}}, if used,  is replaced by value of the expression
+  - name: on_value
+    type: varchar(500)
+    nullable: false
+    default: ""
+    comment: |
+      Dependent parameters to update, whatever the expression value evaluates to
+      [
+      	{"name":"<param_name>", "visibility":1, "value":"{{}}"}
+      ]
+      Here, {{}}, if used,  is replaced by value of the expression
+  - name: order
+    type: int(5)
+    nullable: false
+    default: "0"
+    comment: Order of execution of expressions for that interaction.
+  indexes:
+  - name: fk_request_expressions_interaction_id_idx
+    def: KEY fk_request_expressions_interaction_id_idx (interaction_id) USING BTREE
+    table: request_expressions
+    columns:
+    - interaction_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: request_expressions
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_request_expressions_interaction_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (interaction_id) REFERENCES interactions (id)
+    table: request_expressions
+    referenceTable: interactions
+    columns:
+    - interaction_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: request_expressions
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: "CREATE TABLE `request_expressions` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `interaction_id` int(11) NOT NULL,\n  `expression` varchar(500) NOT NULL COMMENT 'Expression to evaluate. example: \\n[''&&'', [''=='', ''{a:num}'', ''{b}''], [''<'', ''{a}'', ''{c}'']]\\n(I.e, (a == b and a < c)) Evaluates to true/false.\\nAlso, treat ''a'' as a number (without quotes)',\n  `on_true` varchar(500) NOT NULL DEFAULT '' COMMENT 'Dependent parameters to update if the expression value evaluates to true\\n[\\n\t{\"name\":\"<param_name>\", \"visibility\":1, \"value\":\"{{}}\"}\\n]\\nHere, {{}}, if used,  is replaced by value of the expression',\n  `on_false` varchar(500) NOT NULL DEFAULT '' COMMENT 'Dependent parameters to update if the expression value evaluates to false\\n[\\n\t{\"name\":\"<param_name>\", \"visibility\":1, \"value\":\"{{}}\"}\\n]\\nHere, {{}}, if used,  is replaced by value of the expression',\n  `on_value` varchar(500) NOT NULL DEFAULT '' COMMENT 'Dependent parameters to update, whatever the expression value evaluates to\\n[\\n\t{\"name\":\"<param_name>\", \"visibility\":1, \"value\":\"{{}}\"}\\n]\\nHere, {{}}, if used,  is replaced by value of the expression',\n  `order` int(5) NOT NULL DEFAULT '0' COMMENT 'Order of execution of expressions for that interaction.',\n  PRIMARY KEY (`id`),\n  KEY `fk_request_expressions_interaction_id_idx` (`interaction_id`),\n  CONSTRAINT `fk_request_expressions_interaction_id` FOREIGN KEY (`interaction_id`) REFERENCES `interactions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=latin1 COMMENT='Use mathematical expressions using values of other parameters to calculate visibility, enable/disable or new value of other parameters'"
+- name: request_structure
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: interaction_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: parameter_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: order
+    type: int(3)
+    nullable: true
+    default: null
+    comment: Order number in which the request parameters should be displayed
+  - name: is_required
+    type: decimal(1,0)
+    nullable: false
+    default: "1"
+    comment: Is it mandatory to provide a value for this field?
+  - name: is_visible
+    type: decimal(1,0)
+    nullable: false
+    default: "1"
+    comment: Is the item visible (active) by default? The value is submitted (sent to the server) only if it is visible (active).
+  - name: enc_pub_key
+    type: varchar(500)
+    nullable: true
+    default: null
+    comment: ""
+  - name: is_ignored_if_empty
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Do not send the parameter in HTTP request if the value is empty
+  - name: validate
+    type: varchar(255)
+    nullable: false
+    default: ""
+    comment: |
+      Custom validation expression. Use {} for current field's value. Use {param-name} to use another parameter's value.
+      Supports LISP like notation in JSON ARRAY format. First item in array is function name and next items are the operands.
+      Eg: (this-field>amount && this-field<=max_amount) will be written as: ['&&',  ['>',{},{amount}], ['<=',{},{max_amount}]]
+  - name: validate_err_msg
+    type: varchar(255)
+    nullable: false
+    default: ""
+    comment: Error message to show when the validation fails
+  - name: visible_on_param_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: id of PARAMETER on which the visibility of this PARAMETER depends
+  - name: visible_on_param_value
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: value of PARAMETER on which the visibility of this PARAMETER depends
+  - name: required_on_param_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: id of PARAMETER on which the optionality of this PARAMETER depends
+  - name: required_on_param_value
+    type: varchar(1000)
+    nullable: false
+    default: ""
+    comment: value of PARAMETER on which the optionality of this PARAMETER depends
+  - name: disabled_on_param_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: id of PARAMETER based on which this PARAMETER is enabled/disabled
+  - name: disabled_on_param_value
+    type: varchar(45)
+    nullable: false
+    default: ""
+    comment: value of PARAMETER based on which this PARAMETER is enabled/disabled
+  - name: api_uri
+    type: varchar(500)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: api_uri_root_id
+    type: int(3)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: api_interaction_type_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: interaction_type_id for making a API call to modify this field in real time
+  - name: api_on_param_id
+    type: int(11)
+    nullable: false
+    default: "0"
+    comment: id of PARAMETER on which the API call depends. API is called every time that parameter changes
+  - name: api_dependent_params
+    type: varchar(512)
+    nullable: false
+    default: ""
+    comment: |
+      Structure to define dependent parameters, map current parameter name with API parameter name and define constraints. Eg:
+      {
+        "utility_acc_no": {                                            // Call this API if utility_acc_no changes
+              "api_param_name":"mobile_number",        // Send value of utility_acc_no as mobile_number to the API (map utility_acc_no to mobile_number)
+              "length_max":4,                                         // Do not call API if length of utility_acc_no > 4
+              "length_min":4                                           // Do not call API if length of utility_acc_no < 4
+        },
+      
+        "service_type":{}                                             // Also call API if service_type changes. No mapping or constraints
+      }
+  - name: api_response_config
+    type: varchar(512)
+    nullable: false
+    default: ""
+    comment: |
+      Structure to define response data: Pass param from response datastructure as a metadata (value, etc) of another parameter.
+      Eg: [{"name":"data.minimum_length","targetName":"amount","property":"length_min"},{"name":"data.split_msg"}]
+      "property" defaults to "value" and "targetName" defaults to the leaf node of "name". Eg: for "data.split_msg", targetName = split_msg
+  - name: api_cache_timeout_minutes
+    type: int(8)
+    nullable: false
+    default: "0"
+    comment: |
+      If API response is cached, new API request will not be made for the duration of cache-timeout.
+      Zero or negetive number: No Cache
+      Positive number: Cache in minutes
+  - name: autofill
+    type: varchar(255)
+    nullable: false
+    default: ""
+    comment:
+             Comma separated list of values to show as autofill. Eg: "1000,2000,5000"
+  - name: type_again
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Type the number/text input again to confirm?
+  - name: force_submit_id
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: |
+      0 = Default / Ignore this flag
+      1 = Yes. Force submit even the hidden fields
+      2 = No. Don't submit even visible / chained parameters
+  - name: auto_update
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Automatically update this request-parameter if a data by the same name is sent by server
+  - name: is_local
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Local parameter. Do not send to server in API calls.
+  - name: highlight
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: |
+      Should the parameter be highlighted? Show/hide in preview?
+      0: Default, 1: Yes (High Priority), 2: No (Low Priority)
+  indexes:
+  - name: fk_api_uri_root_id
+    def: KEY fk_api_uri_root_id (api_uri_root_id) USING BTREE
+    table: request_structure
+    columns:
+    - api_uri_root_id
+    comment: ""
+  - name: fk_request_parameter_id_index
+    def: KEY fk_request_parameter_id_index (parameter_id) USING BTREE
+    table: request_structure
+    columns:
+    - parameter_id
+    comment: ""
+  - name: fk_request_parameter_interaction_id_index
+    def: KEY fk_request_parameter_interaction_id_index (interaction_id) USING BTREE
+    table: request_structure
+    columns:
+    - interaction_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: request_structure
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_api_uri_root_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (api_uri_root_id) REFERENCES uri_root_master (id)
+    table: request_structure
+    referenceTable: uri_root_master
+    columns:
+    - api_uri_root_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_request_parameter_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (parameter_id) REFERENCES parameters (id)
+    table: request_structure
+    referenceTable: parameters
+    columns:
+    - parameter_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_request_parameter_interaction_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (interaction_id) REFERENCES interactions (id)
+    table: request_structure
+    referenceTable: interactions
+    columns:
+    - interaction_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: request_structure
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: "CREATE TABLE `request_structure` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `interaction_id` int(11) NOT NULL,\n  `parameter_id` int(11) NOT NULL,\n  `order` int(3) DEFAULT NULL COMMENT 'Order number in which the request parameters should be displayed',\n  `is_required` decimal(1,0) NOT NULL DEFAULT '1' COMMENT 'Is it mandatory to provide a value for this field?',\n  `is_visible` decimal(1,0) NOT NULL DEFAULT '1' COMMENT 'Is the item visible (active) by default? The value is submitted (sent to the server) only if it is visible (active). ',\n  `enc_pub_key` varchar(500) DEFAULT NULL,\n  `is_ignored_if_empty` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Do not send the parameter in HTTP request if the value is empty',\n  `validate` varchar(255) NOT NULL DEFAULT '' COMMENT 'Custom validation expression. Use {} for current field''s value. Use {param-name} to use another parameter''s value.\\nSupports LISP like notation in JSON ARRAY format. First item in array is function name and next items are the operands.\\nEg: (this-field>amount && this-field<=max_amount) will be written as: [''&&'',  [''>'',{},{amount}], [''<='',{},{max_amount}]]',\n  `validate_err_msg` varchar(255) NOT NULL DEFAULT '' COMMENT 'Error message to show when the validation fails',\n  `visible_on_param_id` int(11) NOT NULL DEFAULT '0' COMMENT 'id of PARAMETER on which the visibility of this PARAMETER depends',\n  `visible_on_param_value` varchar(1000) NOT NULL DEFAULT '' COMMENT 'value of PARAMETER on which the visibility of this PARAMETER depends',\n  `required_on_param_id` int(11) NOT NULL DEFAULT '0' COMMENT 'id of PARAMETER on which the optionality of this PARAMETER depends',\n  `required_on_param_value` varchar(1000) NOT NULL DEFAULT '' COMMENT 'value of PARAMETER on which the optionality of this PARAMETER depends',\n  `disabled_on_param_id` int(11) NOT NULL DEFAULT '0' COMMENT 'id of PARAMETER based on which this PARAMETER is enabled/disabled',\n  `disabled_on_param_value` varchar(45) NOT NULL DEFAULT '' COMMENT 'value of PARAMETER based on which this PARAMETER is enabled/disabled',\n  `api_uri` varchar(500) NOT NULL DEFAULT '',\n  `api_uri_root_id` int(3) NOT NULL DEFAULT '0',\n  `api_interaction_type_id` int(11) NOT NULL DEFAULT '0' COMMENT 'interaction_type_id for making a API call to modify this field in real time',\n  `api_on_param_id` int(11) NOT NULL DEFAULT '0' COMMENT 'id of PARAMETER on which the API call depends. API is called every time that parameter changes',\n  `api_dependent_params` varchar(512) NOT NULL DEFAULT '' COMMENT 'Structure to define dependent parameters, map current parameter name with API parameter name and define constraints. Eg:\\n{\\n  \"utility_acc_no\": {                                            // Call this API if utility_acc_no changes\\n        \"api_param_name\":\"mobile_number\",        // Send value of utility_acc_no as mobile_number to the API (map utility_acc_no to mobile_number)\\n        \"length_max\":4,                                         // Do not call API if length of utility_acc_no > 4\\n        \"length_min\":4                                           // Do not call API if length of utility_acc_no < 4\\n  },\\n\\n  \"service_type\":{}                                             // Also call API if service_type changes. No mapping or constraints\\n}',\n  `api_response_config` varchar(512) NOT NULL DEFAULT '' COMMENT 'Structure to define response data: Pass param from response datastructure as a metadata (value, etc) of another parameter.\\nEg: [{\"name\":\"data.minimum_length\",\"targetName\":\"amount\",\"property\":\"length_min\"},{\"name\":\"data.split_msg\"}]\\n\"property\" defaults to \"value\" and \"targetName\" defaults to the leaf node of \"name\". Eg: for \"data.split_msg\", targetName = split_msg',\n  `api_cache_timeout_minutes` int(8) NOT NULL DEFAULT '0' COMMENT 'If API response is cached, new API request will not be made for the duration of cache-timeout.\\nZero or negetive number: No Cache\\nPositive number: Cache in minutes',\n  `autofill` varchar(255) NOT NULL DEFAULT '' COMMENT 'Comma separated list of values to show as autofill. Eg: \"1000,2000,5000\" for amount field.',\n  `type_again` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Type the number/text input again to confirm?',\n  `force_submit_id` int(1) NOT NULL DEFAULT '0' COMMENT '0 = Default / Ignore this flag\\n1 = Yes. Force submit even the hidden fields\\n2 = No. Don''t submit even visible / chained parameters',\n  `auto_update` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Automatically update this request-parameter if a data by the same name is sent by server ',\n  `is_local` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Local parameter. Do not send to server in API calls.',\n  `highlight` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Should the parameter be highlighted? Show/hide in preview?\\n0: Default, 1: Yes (High Priority), 2: No (Low Priority)',\n  PRIMARY KEY (`id`),\n  KEY `fk_request_parameter_interaction_id_index` (`interaction_id`),\n  KEY `fk_request_parameter_id_index` (`parameter_id`),\n  KEY `fk_api_uri_root_id` (`api_uri_root_id`),\n  CONSTRAINT `fk_api_uri_root_id` FOREIGN KEY (`api_uri_root_id`) REFERENCES `uri_root_master` (`id`),\n  CONSTRAINT `fk_request_parameter_id` FOREIGN KEY (`parameter_id`) REFERENCES `parameters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_request_parameter_interaction_id` FOREIGN KEY (`interaction_id`) REFERENCES `interactions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=3079 DEFAULT CHARSET=latin1"
+- name: response_interaction_map
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: interaction_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: response_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: _disabled
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Disable this entry
+  indexes:
+  - name: fk_response_interaction_map_interaction_id_idx
+    def: KEY fk_response_interaction_map_interaction_id_idx (interaction_id) USING BTREE
+    table: response_interaction_map
+    columns:
+    - interaction_id
+    comment: ""
+  - name: fk_response_interaction_map_response_id_idx
+    def: KEY fk_response_interaction_map_response_id_idx (response_id) USING BTREE
+    table: response_interaction_map
+    columns:
+    - response_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: response_interaction_map
+    columns:
+    - id
+    comment: ""
+  - name: index_unique_map
+    def: UNIQUE KEY index_unique_map (interaction_id, response_id) USING BTREE
+    table: response_interaction_map
+    columns:
+    - interaction_id
+    - response_id
+    comment: ""
+  constraints:
+  - name: fk_response_interaction_map_interaction_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (interaction_id) REFERENCES interactions (id)
+    table: response_interaction_map
+    referenceTable: interactions
+    columns:
+    - interaction_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_response_interaction_map_response_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (response_id) REFERENCES responses (id)
+    table: response_interaction_map
+    referenceTable: responses
+    columns:
+    - response_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: index_unique_map
+    type: UNIQUE
+    def: UNIQUE KEY index_unique_map (interaction_id, response_id)
+    table: response_interaction_map
+    referenceTable: null
+    columns:
+    - interaction_id
+    - response_id
+    referenceColumns: []
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: response_interaction_map
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `response_interaction_map` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `interaction_id` int(11) NOT NULL,
+      `response_id` int(11) NOT NULL,
+      `_disabled` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Disable this entry',
+      PRIMARY KEY (`id`),
+      UNIQUE KEY `index_unique_map` (`interaction_id`,`response_id`),
+      KEY `fk_response_interaction_map_interaction_id_idx` (`interaction_id`),
+      KEY `fk_response_interaction_map_response_id_idx` (`response_id`),
+      CONSTRAINT `fk_response_interaction_map_interaction_id` FOREIGN KEY (`interaction_id`) REFERENCES `interactions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+      CONSTRAINT `fk_response_interaction_map_response_id` FOREIGN KEY (`response_id`) REFERENCES `responses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE=InnoDB AUTO_INCREMENT=880 DEFAULT CHARSET=latin1
+- name: response_parameter_groups
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: group_parameter_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: member_parameter_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: is_visible
+    type: int(1)
+    nullable: false
+    default: "1"
+    comment: ""
+  - name: display_media_id
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: width_ratio
+    type: int(2)
+    nullable: false
+    default: "1"
+    comment: |
+      width-ratio = 1 ... 12
+      Indicates how total width shhould be divided between the parameters of the group.
+      Eg:If all parameters have width-ratio=1, they get equal space. If one param has width-ratio=2, it gets twice as much space/width as others.
+  indexes:
+  - name: fk_response_parameter_groups_display_media_id_idx
+    def: KEY fk_response_parameter_groups_display_media_id_idx (display_media_id) USING BTREE
+    table: response_parameter_groups
+    columns:
+    - display_media_id
+    comment: ""
+  - name: fk_response_parameter_groups_group_param_id_idx
+    def: KEY fk_response_parameter_groups_group_param_id_idx (group_parameter_id) USING BTREE
+    table: response_parameter_groups
+    columns:
+    - group_parameter_id
+    comment: ""
+  - name: fk_response_parameter_groups_member_param_id_idx
+    def: KEY fk_response_parameter_groups_member_param_id_idx (member_parameter_id) USING BTREE
+    table: response_parameter_groups
+    columns:
+    - member_parameter_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: response_parameter_groups
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_response_parameter_groups_display_media_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (display_media_id) REFERENCES display_media (id)
+    table: response_parameter_groups
+    referenceTable: display_media
+    columns:
+    - display_media_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_response_parameter_groups_group_param_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (group_parameter_id) REFERENCES parameters (id)
+    table: response_parameter_groups
+    referenceTable: parameters
+    columns:
+    - group_parameter_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_response_parameter_groups_member_param_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (member_parameter_id) REFERENCES parameters (id)
+    table: response_parameter_groups
+    referenceTable: parameters
+    columns:
+    - member_parameter_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: response_parameter_groups
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: "CREATE TABLE `response_parameter_groups` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `group_parameter_id` int(11) NOT NULL,\n  `member_parameter_id` int(11) NOT NULL,\n  `is_visible` int(1) NOT NULL DEFAULT '1',\n  `display_media_id` int(1) NOT NULL DEFAULT '0',\n  `width_ratio` int(2) NOT NULL DEFAULT '1' COMMENT 'width-ratio = 1 ... 12\\nIndicates how total width shhould be divided between the parameters of the group.\\nEg:If all parameters have width-ratio=1, they get equal space. If one param has width-ratio=2, it gets twice as much space/width as others.',\n  PRIMARY KEY (`id`),\n  KEY `fk_response_parameter_groups_group_param_id_idx` (`group_parameter_id`),\n  KEY `fk_response_parameter_groups_member_param_id_idx` (`member_parameter_id`),\n  KEY `fk_response_parameter_groups_display_media_id_idx` (`display_media_id`),\n  CONSTRAINT `fk_response_parameter_groups_display_media_id` FOREIGN KEY (`display_media_id`) REFERENCES `display_media` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_response_parameter_groups_group_param_id` FOREIGN KEY (`group_parameter_id`) REFERENCES `parameters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_response_parameter_groups_member_param_id` FOREIGN KEY (`member_parameter_id`) REFERENCES `parameters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=468 DEFAULT CHARSET=latin1"
+- name: response_status
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(1)
+    nullable: false
+    default: null
+    comment: ""
+  - name: name
+    type: varchar(20)
+    nullable: true
+    default: null
+    comment: ""
+  - name: description
+    type: varchar(100)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: response_status
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: response_status
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `response_status` (
+      `id` int(1) NOT NULL AUTO_INCREMENT,
+      `name` varchar(20) DEFAULT NULL,
+      `description` varchar(100) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1
+- name: response_structure
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: response_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: parameter_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: group_response_template
+    type: varchar(45)
+    nullable: true
+    default: null
+    comment: Template to render each repetition of response-group
+  - name: auto_update
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: |
+      Auto update the value of this parameter whenever a response containing a parameter with the same name is returned anywhere in the interaction-flow.
+      Eg: Customer balance, wallet-limits, etc.
+  - name: is_visible
+    type: decimal(1,0)
+    nullable: false
+    default: "1"
+    comment: Show response parameter on UI? Use for chaining, if not.
+  - name: is_emphasised
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment:
+             Emphasise the parameter on UI or show strongly (eg: with bold)
+  - name: display_media_id
+    type: int(1)
+    nullable: false
+    default: "0"
+    comment: ""
+  - name: is_customer_visible
+    type: decimal(1,0)
+    nullable: true
+    default: null
+    comment: Is the field visible to customers (CustaView)? If NULL, the print visibility setting from the field "display_media_id" is used.
+  - name: order
+    type: int(2)
+    nullable: true
+    default: null
+    comment: Order number in which response parameters should be displayed
+  indexes:
+  - name: fk_response_display_media_id_idx
+    def: KEY fk_response_display_media_id_idx (display_media_id) USING BTREE
+    table: response_structure
+    columns:
+    - display_media_id
+    comment: ""
+  - name: fk_response_id_index
+    def: KEY fk_response_id_index (response_id) USING BTREE
+    table: response_structure
+    columns:
+    - response_id
+    comment: ""
+  - name: fk_response_parameter_id_index
+    def: KEY fk_response_parameter_id_index (parameter_id) USING BTREE
+    table: response_structure
+    columns:
+    - parameter_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: response_structure
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_response_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (response_id) REFERENCES responses (id)
+    table: response_structure
+    referenceTable: responses
+    columns:
+    - response_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_response_parameter_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (parameter_id) REFERENCES parameters (id)
+    table: response_structure
+    referenceTable: parameters
+    columns:
+    - parameter_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: fk_response_structure_display_media_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (display_media_id) REFERENCES display_media (id)
+    table: response_structure
+    referenceTable: display_media
+    columns:
+    - display_media_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: response_structure
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: "CREATE TABLE `response_structure` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `response_id` int(11) NOT NULL,\n  `parameter_id` int(11) NOT NULL,\n  `group_response_template` varchar(45) DEFAULT NULL COMMENT 'Template to render each repetition of response-group',\n  `auto_update` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Auto update the value of this parameter whenever a response containing a parameter with the same name is returned anywhere in the interaction-flow.\\nEg: Customer balance, wallet-limits, etc.',\n  `is_visible` decimal(1,0) NOT NULL DEFAULT '1' COMMENT 'Show response parameter on UI? Use for chaining, if not.',\n  `is_emphasised` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Emphasise the parameter on UI or show strongly (eg: with bold)',\n  `display_media_id` int(1) NOT NULL DEFAULT '0',\n  `is_customer_visible` decimal(1,0) DEFAULT NULL COMMENT 'Is the field visible to customers (CustaView)? If NULL, the print visibility setting from the field \"display_media_id\" is used.',\n  `order` int(2) DEFAULT NULL COMMENT 'Order number in which response parameters should be displayed',\n  PRIMARY KEY (`id`),\n  KEY `fk_response_id_index` (`response_id`),\n  KEY `fk_response_parameter_id_index` (`parameter_id`),\n  KEY `fk_response_display_media_id_idx` (`display_media_id`),\n  CONSTRAINT `fk_response_id` FOREIGN KEY (`response_id`) REFERENCES `responses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_response_parameter_id` FOREIGN KEY (`parameter_id`) REFERENCES `parameters` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_response_structure_display_media_id` FOREIGN KEY (`display_media_id`) REFERENCES `display_media` (`id`) ON DELETE CASCADE ON UPDATE CASCADE\n) ENGINE=InnoDB AUTO_INCREMENT=979 DEFAULT CHARSET=latin1"
+- name: responses
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: response_type_id
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: response_status_id
+    type: int(11)
+    nullable: true
+    default: "0"
+    comment: ""
+  - name: pre_msg_template
+    type: varchar(600)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: pre_msg_template_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: post_msg_template
+    type: varchar(500)
+    nullable: false
+    default: ""
+    comment: ""
+  - name: post_msg_template_i18n
+    type: int(11)
+    nullable: true
+    default: null
+    comment: ""
+  - name: disable_redo
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Do not allow user to jump back to this response card by clicking on it (when it is in preview mode)
+  - name: logo
+    type: varchar(200)
+    nullable: false
+    default: ""
+    comment:
+             LOGO / Branding image absolute URI to show on top-right side of response cards. MAX-HEIGHT: 50px
+  - name: _context
+    type: varchar(250)
+    nullable: true
+    default: null
+    comment: more info about this response for internal usage
+  indexes:
+  - name: fk_response_status_id_index
+    def: KEY fk_response_status_id_index (response_status_id) USING BTREE
+    table: responses
+    columns:
+    - response_status_id
+    comment: ""
+  - name: fk_response_type_id_index
+    def: KEY fk_response_type_id_index (response_type_id) USING BTREE
+    table: responses
+    columns:
+    - response_type_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: responses
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: fk_response_status_id
+    type: FOREIGN KEY
+    def: FOREIGN KEY (response_status_id) REFERENCES response_status (id)
+    table: responses
+    referenceTable: response_status
+    columns:
+    - response_status_id
+    referenceColumns:
+    - id
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: responses
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `responses` (
+      `id` int(11) NOT NULL,
+      `response_type_id` int(11) DEFAULT NULL,
+      `response_status_id` int(11) DEFAULT '0',
+      `pre_msg_template` varchar(600) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+      `pre_msg_template_i18n` int(11) DEFAULT NULL,
+      `post_msg_template` varchar(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+      `post_msg_template_i18n` int(11) DEFAULT NULL,
+      `disable_redo` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Do not allow user to jump back to this response card by clicking on it (when it is in preview mode)',
+      `logo` varchar(200) NOT NULL DEFAULT '' COMMENT 'LOGO / Branding image absolute URI to show on top-right side of response cards. MAX-HEIGHT: 50px',
+      `_context` varchar(250) DEFAULT NULL COMMENT 'more info about this response for internal usage',
+      PRIMARY KEY (`id`),
+      KEY `fk_response_status_id_index` (`response_status_id`),
+      KEY `fk_response_type_id_index` (`response_type_id`),
+      CONSTRAINT `fk_response_status_id` FOREIGN KEY (`response_status_id`) REFERENCES `response_status` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1
+- name: role_interaction_map
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: role_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: interaction_id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: disabled
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Do not load/show transaction, if disabled
+  - name: release_date
+    type: date
+    nullable: true
+    default: null
+    comment: ""
+  - name: important
+    type: decimal(1,0)
+    nullable: false
+    default: "0"
+    comment: Is the transaction important?
+  - name: trxn_label
+    type: varchar(45)
+    nullable: true
+    default: null
+    comment: ""
+  - name: role
+    type: varchar(45)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: fk_role_interaction_map_interaction_id_idx
+    def: KEY fk_role_interaction_map_interaction_id_idx (interaction_id) USING BTREE
+    table: role_interaction_map
+    columns:
+    - interaction_id
+    comment: ""
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: role_interaction_map
+    columns:
+    - id
+    comment: ""
+  - name: indx_role_interaction_map_unique_roles
+    def: UNIQUE KEY indx_role_interaction_map_unique_roles (role_id, interaction_id) USING BTREE
+    table: role_interaction_map
+    columns:
+    - role_id
+    - interaction_id
+    comment: ""
+  constraints:
+  - name: indx_role_interaction_map_unique_roles
+    type: UNIQUE
+    def: UNIQUE KEY indx_role_interaction_map_unique_roles (role_id, interaction_id)
+    table: role_interaction_map
+    referenceTable: null
+    columns:
+    - role_id
+    - interaction_id
+    referenceColumns: []
+    comment: ""
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: role_interaction_map
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `role_interaction_map` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `role_id` int(11) NOT NULL,
+      `interaction_id` int(11) NOT NULL,
+      `disabled` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Do not load/show transaction, if disabled',
+      `release_date` date DEFAULT NULL,
+      `important` decimal(1,0) NOT NULL DEFAULT '0' COMMENT 'Is the transaction important?',
+      `trxn_label` varchar(45) DEFAULT NULL,
+      `role` varchar(45) DEFAULT NULL,
+      PRIMARY KEY (`id`),
+      UNIQUE KEY `indx_role_interaction_map_unique_roles` (`role_id`,`interaction_id`),
+      KEY `fk_role_interaction_map_interaction_id_idx` (`interaction_id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=832 DEFAULT CHARSET=latin1
+- name: text_case_types
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(1)
+    nullable: false
+    default: null
+    comment: ""
+  - name: name
+    type: varchar(10)
+    nullable: true
+    default: null
+    comment: ""
+  - name: description
+    type: varchar(45)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: text_case_types
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: text_case_types
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `text_case_types` (
+      `id` int(1) NOT NULL,
+      `name` varchar(10) DEFAULT NULL,
+      `description` varchar(45) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1
+- name: uri_root_master
+  type: BASE TABLE
+  comment: ""
+  columns:
+  - name: id
+    type: int(11)
+    nullable: false
+    default: null
+    comment: ""
+  - name: uri_root_path
+    type: varchar(128)
+    nullable: false
+    default: null
+    comment: ""
+  - name: uri_root_path_uat
+    type: varchar(128)
+    nullable: true
+    default: null
+    comment: ""
+  indexes:
+  - name: PRIMARY
+    def: PRIMARY KEY (id) USING BTREE
+    table: uri_root_master
+    columns:
+    - id
+    comment: ""
+  constraints:
+  - name: PRIMARY
+    type: PRIMARY KEY
+    def: PRIMARY KEY (id)
+    table: uri_root_master
+    referenceTable: null
+    columns:
+    - id
+    referenceColumns: []
+    comment: ""
+  triggers: []
+  def: |-
+    CREATE TABLE `uri_root_master` (
+      `id` int(11) NOT NULL,
+      `uri_root_path` varchar(128) NOT NULL,
+      `uri_root_path_uat` varchar(128) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=latin1
+relations:
+- table: brand_categories
+  columns:
+  - title_i18n
+  parentTable: i18n_lang_strings
+  parentColumns:
+  - id
+  def: FOREIGN KEY (title_i18n) REFERENCES i18n_lang_strings (id)
+  virtual: false
+- table: interaction_chain_input_parameters
+  columns:
+  - interaction_chain_id
+  parentTable: interaction_chains
+  parentColumns:
+  - id
+  def: FOREIGN KEY (interaction_chain_id) REFERENCES interaction_chains (id)
+  virtual: false
+- table: interaction_chain_input_parameters
+  columns:
+  - parameter_id
+  parentTable: parameters
+  parentColumns:
+  - id
+  def: FOREIGN KEY (parameter_id) REFERENCES parameters (id)
+  virtual: false
+- table: interaction_chain_input_parameters
+  columns:
+  - target_parameter_id
+  parentTable: parameters
+  parentColumns:
+  - id
+  def: FOREIGN KEY (target_parameter_id) REFERENCES parameters (id)
+  virtual: false
+- table: interaction_chains
+  columns:
+  - next_interaction_id
+  parentTable: interactions
+  parentColumns:
+  - id
+  def: FOREIGN KEY (next_interaction_id) REFERENCES interactions (id)
+  virtual: false
+- table: interaction_chains
+  columns:
+  - response_interaction_map_id
+  parentTable: response_interaction_map
+  parentColumns:
+  - id
+  def: FOREIGN KEY (response_interaction_map_id) REFERENCES response_interaction_map (id)
+  virtual: false
+- table: interaction_chains
+  columns:
+  - chain_behavior_id
+  parentTable: chain_behaviors
+  parentColumns:
+  - id
+  def: FOREIGN KEY (chain_behavior_id) REFERENCES chain_behaviors (id)
+  virtual: false
+- table: interaction_group_links
+  columns:
+  - group_interaction_id
+  parentTable: interactions
+  parentColumns:
+  - id
+  def: FOREIGN KEY (group_interaction_id) REFERENCES interactions (id)
+  virtual: false
+- table: interaction_group_links
+  columns:
+  - link_interaction_id
+  parentTable: interactions
+  parentColumns:
+  - id
+  def: FOREIGN KEY (link_interaction_id) REFERENCES interactions (id)
+  virtual: false
+- table: interactions
+  columns:
+  - flow_start_interaction_id
+  parentTable: interactions
+  parentColumns:
+  - id
+  def: FOREIGN KEY (flow_start_interaction_id) REFERENCES interactions (id)
+  virtual: false
+- table: interactions
+  columns:
+  - interaction_behavior_id
+  parentTable: interaction_behaviors
+  parentColumns:
+  - id
+  def: FOREIGN KEY (interaction_behavior_id) REFERENCES interaction_behaviors (id)
+  virtual: false
+- table: interactions
+  columns:
+  - interaction_category_id
+  parentTable: interaction_categories
+  parentColumns:
+  - id
+  def: FOREIGN KEY (interaction_category_id) REFERENCES interaction_categories (id)
+  virtual: false
+- table: interactions
+  columns:
+  - uri_root_id
+  parentTable: uri_root_master
+  parentColumns:
+  - id
+  def: FOREIGN KEY (uri_root_id) REFERENCES uri_root_master (id)
+  virtual: false
+- table: list_elements
+  columns:
+  - parameter_id
+  parentTable: parameters
+  parentColumns:
+  - id
+  def: FOREIGN KEY (parameter_id) REFERENCES parameters (id)
+  virtual: false
+- table: parameters
+  columns:
+  - parameter_type_id
+  parentTable: parameter_types
+  parentColumns:
+  - id
+  def: FOREIGN KEY (parameter_type_id) REFERENCES parameter_types (id)
+  virtual: false
+- table: parameters
+  columns:
+  - text_case_type_id
+  parentTable: text_case_types
+  parentColumns:
+  - id
+  def: FOREIGN KEY (text_case_type_id) REFERENCES text_case_types (id)
+  virtual: false
+- table: request_expressions
+  columns:
+  - interaction_id
+  parentTable: interactions
+  parentColumns:
+  - id
+  def: FOREIGN KEY (interaction_id) REFERENCES interactions (id)
+  virtual: false
+- table: request_structure
+  columns:
+  - api_uri_root_id
+  parentTable: uri_root_master
+  parentColumns:
+  - id
+  def: FOREIGN KEY (api_uri_root_id) REFERENCES uri_root_master (id)
+  virtual: false
+- table: request_structure
+  columns:
+  - parameter_id
+  parentTable: parameters
+  parentColumns:
+  - id
+  def: FOREIGN KEY (parameter_id) REFERENCES parameters (id)
+  virtual: false
+- table: request_structure
+  columns:
+  - interaction_id
+  parentTable: interactions
+  parentColumns:
+  - id
+  def: FOREIGN KEY (interaction_id) REFERENCES interactions (id)
+  virtual: false
+- table: response_interaction_map
+  columns:
+  - interaction_id
+  parentTable: interactions
+  parentColumns:
+  - id
+  def: FOREIGN KEY (interaction_id) REFERENCES interactions (id)
+  virtual: false
+- table: response_interaction_map
+  columns:
+  - response_id
+  parentTable: responses
+  parentColumns:
+  - id
+  def: FOREIGN KEY (response_id) REFERENCES responses (id)
+  virtual: false
+- table: response_parameter_groups
+  columns:
+  - display_media_id
+  parentTable: display_media
+  parentColumns:
+  - id
+  def: FOREIGN KEY (display_media_id) REFERENCES display_media (id)
+  virtual: false
+- table: response_parameter_groups
+  columns:
+  - group_parameter_id
+  parentTable: parameters
+  parentColumns:
+  - id
+  def: FOREIGN KEY (group_parameter_id) REFERENCES parameters (id)
+  virtual: false
+- table: response_parameter_groups
+  columns:
+  - member_parameter_id
+  parentTable: parameters
+  parentColumns:
+  - id
+  def: FOREIGN KEY (member_parameter_id) REFERENCES parameters (id)
+  virtual: false
+- table: response_structure
+  columns:
+  - response_id
+  parentTable: responses
+  parentColumns:
+  - id
+  def: FOREIGN KEY (response_id) REFERENCES responses (id)
+  virtual: false
+- table: response_structure
+  columns:
+  - parameter_id
+  parentTable: parameters
+  parentColumns:
+  - id
+  def: FOREIGN KEY (parameter_id) REFERENCES parameters (id)
+  virtual: false
+- table: response_structure
+  columns:
+  - display_media_id
+  parentTable: display_media
+  parentColumns:
+  - id
+  def: FOREIGN KEY (display_media_id) REFERENCES display_media (id)
+  virtual: false
+- table: responses
+  columns:
+  - response_status_id
+  parentTable: response_status
+  parentColumns:
+  - id
+  def: FOREIGN KEY (response_status_id) REFERENCES response_status (id)
+  virtual: false
+driver:
+  name: mysql
+  databaseVersion: 8.0.16
+  meta: null
