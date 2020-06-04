@@ -14,3 +14,14 @@ A framework to describe financial transactions and product-flows in order to aut
 
 ## Introduction
 _WIP_
+
+## Features
+* **Transactions**
+* **Request**
+* **Responses**
+* **Parameters**
+* **Chain**: Define a user's journey for a product by chaining one or more next transactions after a response.
+* **Internationalization**
+* **Expressions**: Enables defining of basic logic by making mathematical or logical calculations.
+* **Roles**: Map transactions (products) to roles to enable access control.
+
