@@ -30,4 +30,5 @@ _WIP_
 * **Internationalization**
 * **Expressions**: Enables defining of basic logic by making arithmatical or logical calculations.
 * **Roles**: Map transactions (products) to roles to enable access control.
-
+* **Reusable Components**: Components like parameters, responses, etc, can be reused 
+in multiple transactions.
