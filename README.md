@@ -8,7 +8,7 @@ A framework to describe financial transactions and product-flows in order to aut
 
 ---
 
-## Links
+## Reference
 * [Schema (YAML)](https://github.com/ekoindia/interaction-framework-spec/blob/master/schema)
 * [Documentation (Table Structure)](https://github.com/ekoindia/interaction-framework-spec/blob/master/doc/README.md)
 
